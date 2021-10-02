@@ -1,0 +1,21 @@
+<div id="page">
+  <div id="content">
+    <div id="header">
+      <% IF logged_in %>
+        <h1>Welcome, <%name%>!!</h1>
+        <% IF usertype == "Admin" %>
+          <a class="userManagement" href="<% request.uri_base %>/page/addpage">Add Page</a>
+          <a class="userManagement" href="<% request.uri_base %>/page/addcategory">Add Category</a>
+          <a class="userManagement" href="<% request.uri_base %>/user/adduser">Add User</a>
+          <hr>
+        <% END %>
+
+        <% IF usertype == "Admin" || usertype == "Editor" %>
+          <a class="userManagement" href="<% request.uri_base %>/snip/addsnippet">Add Snippet</a>
+        <% END %>
+      <% ELSE %>
+        <h1>Please <a href="<% request.uri_base %>/user/login">log in</a> to view this page.</h1>
+      <% END %> 
+    </div>
+  </div>
+ </div> 

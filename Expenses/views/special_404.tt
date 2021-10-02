@@ -1,0 +1,11 @@
+<div id="page">
+  <div id="content">
+    <div class="warning">
+                <i class="fa fa-warning"></i>
+        <p>You tried to reach <% path %>, but it is unavailable at the moment.</p>
+        
+        <p>Please try again.</p>
+    </div>
+
+  </div>
+</div> 

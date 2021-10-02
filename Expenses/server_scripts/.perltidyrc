@@ -1,0 +1,11 @@
+# Put in user home directory
+# This implements a highly spaced style
+-bl       # braces on new lines
+-pt=1     # parens not tight at all
+-bt=0     # braces not tight
+-sbt=0    # square brackets not tight
+-sbl      # opening sub bracket on new lines
+-asbl     # anonymous subs brakcet on new line
+-nsfs 
+-nolq
+-vmll

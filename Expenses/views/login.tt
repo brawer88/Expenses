@@ -1,0 +1,18 @@
+<div id="page">
+  <div id="content">
+    <h1>Login in to unlock the powers behind this wiki.</h1>
+    <form action="<% request.uri_base %>/user/login"  method="post">
+        <% IF error.length > 1 %>
+            <div class="warning">
+                <i class="fa fa-warning"></i>
+                <% error %> 
+            </div>
+        <% END %>
+        <label for="user">Username:</label>
+        <input id="user" name="user" type="text" value=<% user %>>
+        <label for="password">Password:</label>
+        <input id="password" name="password" type="password" value=<% password %> >
+        <input type="submit" value="Submit">
+    </form> 
+  </div>
+</div> 
