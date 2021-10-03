@@ -16,4 +16,18 @@ get '/' => sub
     };
 };
 
+
+#------------------------------------------
+#   Get method for Ava's easter egg
+#------------------------------------------
+get '/ava' => sub
+{
+    my $user = session('user') // Models::User->new();
+
+    template 'ava' => {
+        'title'     => 'Ava\'s Page',
+        'logged_in' => $user->logged_in // 0,
+    };
+};
+
 1;
