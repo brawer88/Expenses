@@ -6,7 +6,7 @@
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 Controllers::MainController	lib/Controllers/MainController.pm	1;"	p
 Controllers::UserController	lib/Controllers/UserController.pm	1;"	p
-DESTROY	lib/Models/Database.pm	67;"	s
+DESTROY	lib/Models/Database.pm	110;"	s
 DESTROY	lib/Models/User.pm	98;"	s
 Expense::Schema	lib/Expense/Schema.pm	2;"	p
 Expense::Schema::Result::Bank	lib/Expense/Schema/Result/Bank.pm	2;"	p
@@ -14,9 +14,11 @@ Expense::Schema::Result::Envelope	lib/Expense/Schema/Result/Envelope.pm	2;"	p
 Expense::Schema::Result::Transaction	lib/Expense/Schema/Result/Transaction.pm	2;"	p
 Expense::Schema::Result::User	lib/Expense/Schema/Result/User.pm	2;"	p
 Expenses	lib/Expenses.pm	1;"	p
+GetEnvelopes	lib/Models/Database.pm	68;"	s
 Login	lib/Models/Database.pm	30;"	s
 Models::Database	lib/Models/Database.pm	1;"	p
-Models::Database::DESTROY	lib/Models/Database.pm	67;"	s
+Models::Database::DESTROY	lib/Models/Database.pm	110;"	s
+Models::Database::GetEnvelopes	lib/Models/Database.pm	68;"	s
 Models::Database::Login	lib/Models/Database.pm	30;"	s
 Models::Database::new	lib/Models/Database.pm	16;"	s
 Models::User	lib/Models/User.pm	1;"	p

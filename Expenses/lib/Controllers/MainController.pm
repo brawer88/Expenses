@@ -1,5 +1,6 @@
 package Controllers::MainController;
 use Dancer2 appname => 'Expenses';
+use Models::Utilities;
 
 my $db = Models::Database->new();
 
@@ -9,10 +10,15 @@ my $db = Models::Database->new();
 get '/' => sub
 {
     my $user = session('user') // Models::User->new();
+    my $envelopes;
 
+    $envelopes = $db->GetEnvelopes($user->UID);
+    
     template 'index' => {
         'title'     => 'Expenses: Home',
+        'envelopes' => $envelopes,
         'logged_in' => $user->logged_in // 0,
+        'msg'       => get_flash()
     };
 };
 

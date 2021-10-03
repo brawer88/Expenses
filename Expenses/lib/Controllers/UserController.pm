@@ -13,6 +13,10 @@ prefix '/user';
 #------------------------------------------
 get '/logout' => sub
 {
+    my $user = session('user') // Models::User->new();
+    my $username = $user->username;
+
+    set_flash("$username logged out.");
     context->destroy_session;
 
     return redirect uri_for('/');
@@ -23,12 +27,13 @@ get '/logout' => sub
 #------------------------------------------
 get '/login' => sub
 {
-    my $user       = session('user') // Models::User->new();
+    my $user = session('user') // Models::User->new();
 
     template 'login' => {
-        'title'      => 'Expenses: Login',
-        'pageTitle'  => 'Login',
-        'logged_in'  => $user->logged_in // 0,
+        'title'     => 'Expenses: Login',
+        'pageTitle' => 'Login',
+        'logged_in' => $user->logged_in // 0,
+        'msg'       => get_flash()
     };
 };
 
@@ -37,8 +42,8 @@ get '/login' => sub
 #------------------------------------------
 post '/login' => sub
 {
-    my $username   = body_parameters->get('user');
-    my $password   = body_parameters->get('password');
+    my $username = body_parameters->get('user');
+    my $password = body_parameters->get('password');
 
     my $user = $db->Login( $username, $password );
 
@@ -46,16 +51,16 @@ post '/login' => sub
     {
         session user => $user;
         set_flash("Logged in successfully.");
-        return redirect uri_for('/user');
+        return redirect uri_for('/');
     }
 
     template 'login' => {
-        'title'      => 'Expenses: Login',
-        'pageTitle'  => 'Login',
-        'user'       => $username,
-        'logged_in'  => $user->logged_in // 0,
-        'password'   => $password,
-        'error'      => "Username and password do not match. Please try again.",
+        'title'     => 'Expenses: Login',
+        'pageTitle' => 'Login',
+        'user'      => $username,
+        'logged_in' => $user->logged_in // 0,
+        'password'  => $password,
+        'error'     => "Username and password do not match. Please try again.",
     };
 };
 
@@ -64,15 +69,15 @@ post '/login' => sub
 #------------------------------------------
 get qr{\/?} => sub
 {
-    my $user       = session('user') // Models::User->new();
+    my $user = session('user') // Models::User->new();
 
     template 'user' => {
-        'title'      => 'Expenses: User',
-        'logged_in'  => $user->logged_in // 0,
-        'pageTitle'  => 'Account Management',
-        'usertype'   => $user->usertype // 'Viewer',
-        'name'       => $user->firstname . " " . $user->lastname,
-        'msg'        => get_flash(),
+        'title'     => 'Expenses: User',
+        'logged_in' => $user->logged_in // 0,
+        'pageTitle' => 'Account Management',
+        'usertype'  => $user->usertype // 'Viewer',
+        'name'      => $user->firstname . " " . $user->lastname,
+        'msg'       => get_flash(),
     };
 };
 

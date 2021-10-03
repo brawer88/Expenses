@@ -7,6 +7,8 @@
   <title><% title %></title>
   <link rel="stylesheet" href="<% request.uri_base %>/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script type="text/javascript" src="<% request.uri_base %>/javascripts/main.js"></script>
 <script type="text/javascript" src="<% request.uri_base %>/javascripts/jquery.js"></script>
@@ -15,30 +17,34 @@
 
 <body>
   <div id="container">
-    <div class="topnav">
-      <h1><a href="<% request.uri_base %>/">Your Expense Tracker</a></h1>     
-    </div>
-    <div id="sidebar">
-        <ul id="sidebar-items">
-          <li>
-            <h3>Join the community</h3>
-            <ul class="links">
-              <% IF logged_in %>
-                <li><a  class="userManagement" href="<% request.uri_base %>/user/logout">Logout</a></li>
-                <li><a  class="userManagement" href="<% request.uri_base %>/user">Account</a></li>
-              <% ELSE %>
-                <li><a  class="userManagement" href="<% request.uri_base %>/user/login">Login</a></li>
-              <% END %>
-            </ul>
-          </li>
-        </ul>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="<% request.uri_base %>/">Track My Expenses</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="<% request.uri_base %>/">Home</a>
+          <% IF logged_in %>
+            <a class="nav-item nav-link" href="<% request.uri_base %>/user/logout">Logout</a>
+            <a class="nav-item nav-link" href="<% request.uri_base %>/user">Account</a>
+          <% ELSE %>
+            <a class="nav-item nav-link" href="<% request.uri_base %>/user/login">Login</a>
+          <% END %>
+        </div>
+      </div>
+    </nav>
     <% IF msg %>
       <div class=flash> <% msg %> </div>
     <% END %>  
     <% content %>
-    <div id="footer">
-    </div>
+    <footer class="footer">
+      <div class="container">
+          <span class="text-muted">
+             &copy; <script type="text/JavaScript"> var theDate=new Date(); document.write(theDate.getFullYear())</script> Brawer Development
+          </span>
+      </div>
+    </footer>
   </div>
 </body>
 </html>

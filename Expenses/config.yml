@@ -38,7 +38,7 @@ engines:
   session:
     YAML:
       cookie_name: dance.set
-      session_dir: "/var/www/html/Wiki/sessions"
+      session_dir: "/var/www/html/ExpenseTracker/Expenses/sessions"
       cookie_duration: '604800'    # Default cookie timeout in seconds
       cookie_same_site: 'Lax'
       is_secure: 0
