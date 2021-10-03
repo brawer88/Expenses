@@ -9,12 +9,6 @@ use Dancer2::Plugin::Passphrase;
 use Dancer2::Plugin::DBIC;
 use Expense::Schema;
 use Time::Piece::MySQL;
-use Text::MultiMarkdown;
-
-my $m = Text::MultiMarkdown->new(
-    empty_element_suffix => '>',
-    tab_width            => 2,
-);
 
 #------------------------------------------
 #  Constructor

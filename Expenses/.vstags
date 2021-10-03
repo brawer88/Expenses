@@ -6,7 +6,7 @@
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 Controllers::MainController	lib/Controllers/MainController.pm	1;"	p
 Controllers::UserController	lib/Controllers/UserController.pm	1;"	p
-DESTROY	lib/Models/Database.pm	73;"	s
+DESTROY	lib/Models/Database.pm	67;"	s
 DESTROY	lib/Models/User.pm	98;"	s
 Expense::Schema	lib/Expense/Schema.pm	2;"	p
 Expense::Schema::Result::Bank	lib/Expense/Schema/Result/Bank.pm	2;"	p
@@ -14,11 +14,11 @@ Expense::Schema::Result::Envelope	lib/Expense/Schema/Result/Envelope.pm	2;"	p
 Expense::Schema::Result::Transaction	lib/Expense/Schema/Result/Transaction.pm	2;"	p
 Expense::Schema::Result::User	lib/Expense/Schema/Result/User.pm	2;"	p
 Expenses	lib/Expenses.pm	1;"	p
-Login	lib/Models/Database.pm	36;"	s
+Login	lib/Models/Database.pm	30;"	s
 Models::Database	lib/Models/Database.pm	1;"	p
-Models::Database::DESTROY	lib/Models/Database.pm	73;"	s
-Models::Database::Login	lib/Models/Database.pm	36;"	s
-Models::Database::new	lib/Models/Database.pm	22;"	s
+Models::Database::DESTROY	lib/Models/Database.pm	67;"	s
+Models::Database::Login	lib/Models/Database.pm	30;"	s
+Models::Database::new	lib/Models/Database.pm	16;"	s
 Models::User	lib/Models/User.pm	1;"	p
 Models::User::DESTROY	lib/Models/User.pm	98;"	s
 Models::User::UID	lib/Models/User.pm	20;"	s
@@ -51,7 +51,7 @@ getLinkInfo	lib/Models/Utilities.pm	285;"	s
 get_flash	lib/Models/Utilities.pm	41;"	s
 lastname	lib/Models/User.pm	59;"	s
 logged_in	lib/Models/User.pm	85;"	s
-new	lib/Models/Database.pm	22;"	s
+new	lib/Models/Database.pm	16;"	s
 new	lib/Models/User.pm	8;"	s
 printHash	lib/Models/Utilities.pm	210;"	s
 set_flash	lib/Models/Utilities.pm	32;"	s

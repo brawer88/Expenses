@@ -60,6 +60,12 @@ __PACKAGE__->table("Envelope");
   is_foreign_key: 1
   is_nullable: 0
 
+=head2 goalamount
+
+  data_type: 'decimal'
+  is_nullable: 1
+  size: [13,2]
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -71,6 +77,8 @@ __PACKAGE__->add_columns(
   { data_type => "decimal", is_nullable => 0, size => [13, 2] },
   "userid",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
+  "goalamount",
+  { data_type => "decimal", is_nullable => 1, size => [13, 2] },
 );
 
 =head1 PRIMARY KEY
@@ -118,8 +126,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-02 14:36:41
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7L6himJCh9ZsTqX28IYPCA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-02 22:30:50
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+rq+WU8+jWELA8A9mOf3CQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
