@@ -10,6 +10,7 @@ my $db = Models::Database->new();
 
 use Controllers::UserController;
 use Controllers::MainController;
+use Controllers::TransactionController;
 
 our $VERSION = '0.1';
 

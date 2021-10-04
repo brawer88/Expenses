@@ -10,16 +10,26 @@ my $db = Models::Database->new();
 get '/' => sub
 {
     my $user = session('user') // Models::User->new();
-    my $envelopes;
 
-    $envelopes = $db->GetEnvelopes($user->UID);
-    
     template 'index' => {
         'title'     => 'Expenses: Home',
-        'envelopes' => $envelopes,
         'logged_in' => $user->logged_in // 0,
         'msg'       => get_flash()
     };
+};
+
+#------------------------------------------
+#   Get method for returning an ajax of envelopes html
+#------------------------------------------
+get '/envelopes' => sub
+{
+    my $user = session('user') // Models::User->new();
+    my $envelopes;
+
+    $envelopes = $db->GetEnvelopes($user->UID);
+
+    header 'Content-Type' => 'application/json';
+    return to_json { text => $envelopes };
 };
 
 
