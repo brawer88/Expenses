@@ -10,10 +10,18 @@ my $db = Models::Database->new();
 get '/' => sub
 {
     my $user = session('user') // Models::User->new();
+    my $banks;
+    my $envelopes;
+
+    $envelopes = $db->GetEnvelopes($user->UID);
+
+    $banks = $db->GetBanks($user->UID);
 
     template 'index' => {
         'title'     => 'Expenses: Home',
         'logged_in' => $user->logged_in // 0,
+        'banks'     => $banks,
+        'envelopes' => $envelopes,
         'msg'       => get_flash()
     };
 };
@@ -32,6 +40,20 @@ get '/envelopes' => sub
     return to_json { text => $envelopes };
 };
 
+
+#------------------------------------------
+#   Get method for returning an ajax of banks html
+#------------------------------------------
+get '/banks' => sub
+{
+    my $user = session('user') // Models::User->new();
+    my $banks;
+
+    $banks = $db->GetBanks($user->UID);
+
+    header 'Content-Type' => 'application/json';
+    return to_json { text => $banks };
+};
 
 #------------------------------------------
 #   Get method for Ava's easter egg

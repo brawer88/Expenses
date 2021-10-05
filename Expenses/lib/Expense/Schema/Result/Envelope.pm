@@ -67,6 +67,12 @@ __PACKAGE__->table("Envelope");
   is_nullable: 1
   size: [13,2]
 
+=head2 bankid
+
+  data_type: 'bigint'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -80,6 +86,8 @@ __PACKAGE__->add_columns(
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
   "goalamount",
   { data_type => "decimal", is_nullable => 1, size => [13, 2] },
+  "bankid",
+  { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -95,6 +103,26 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("envelopeid");
 
 =head1 RELATIONS
+
+=head2 bankid
+
+Type: belongs_to
+
+Related object: L<Expense::Schema::Result::Bank>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "bankid",
+  "Expense::Schema::Result::Bank",
+  { bankid => "bankid" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "RESTRICT",
+    on_update     => "RESTRICT",
+  },
+);
 
 =head2 transactions
 
@@ -127,8 +155,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-03 16:17:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0PLF2QnJmH/j1HW/7mDfeQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-05 17:32:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nuWLJ1XTzB7ZRhBMmj0gXw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

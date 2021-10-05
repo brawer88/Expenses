@@ -1,15 +1,17 @@
 <div id="page">
   <div id="content">
-    <div id="env_div"></div>
-    <% IF logged_in == 0 %>
+    <% IF logged_in %>
+      <div id="bank_div"><% banks %></div>
+      <div id="env_div"><% envelopes %></div>
+    <% ELSE %>
       <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to view your envelopes</p>
     <% END %>
   </div>
 </div>
+
+
 <script type="text/Javascript">
 $(document).ready(function() {
-
-    getEnvelopes();
 
     $('#envelopes tr').click(function() {
         var href = $(this).find("a").attr("href");

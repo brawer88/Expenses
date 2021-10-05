@@ -88,6 +88,21 @@ __PACKAGE__->set_primary_key("bankid");
 
 =head1 RELATIONS
 
+=head2 envelopes
+
+Type: has_many
+
+Related object: L<Expense::Schema::Result::Envelope>
+
+=cut
+
+__PACKAGE__->has_many(
+  "envelopes",
+  "Expense::Schema::Result::Envelope",
+  { "foreign.bankid" => "self.bankid" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 transactions
 
 Type: has_many
@@ -119,8 +134,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-02 14:36:41
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:o29OVDC/JVq16TsdIziXXA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-05 17:32:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:q4agxeuppM3tyV7T3VVzuA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

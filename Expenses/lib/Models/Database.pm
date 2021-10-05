@@ -104,6 +104,44 @@ sub GetEnvelopes
     return $html;
 }
 
+
+#  GetBanks
+#  Abstract: Gets Banks
+#  params: ( $UID )
+#  returns: $html - the html rep of all envelopes belonging to the user
+sub GetBanks
+{
+    my ($self, $UID) = @_;
+    my $html;
+
+    my $rs = resultset('Bank')->search(
+        {
+            userid => $UID
+        }
+    );
+    
+    $html .= qq~
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1 class="display-4">Banks</h1>
+                            <table id="envelope" class="table table-bordered"><thead><tr><th>&nbsp;</th><th>Name</th><th>Balance</th></tr></thead><tbody>
+            ~;
+    while ( my $row = $rs->next )
+    {
+        my $balance = $row->get_column("balance");
+        print "\n\n$balance\n\n";
+        my $name = $row->get_column("name");
+        
+        $html .= qq~
+                    <tr><td><a href="/bank/$name" class="btn btn-primary">Manage</a></td><td>$name</td><td>$balance</td></tr>
+                 ~;
+    }
+
+    $html .= qq~</tbody></table></div></div>~;
+
+    return $html;
+}
+
 #------------------------------------------
 #   Destructor
 #------------------------------------------

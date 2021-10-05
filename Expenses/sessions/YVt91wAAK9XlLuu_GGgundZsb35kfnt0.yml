@@ -1,7 +1,0 @@
----
-user: !!perl/hash:Models::User
-  UID: 2
-  firstname: Fred
-  lastname: Wilson
-  logged_in: 1
-  username: Fred

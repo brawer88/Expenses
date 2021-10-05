@@ -5,3 +5,9 @@ function getEnvelopes(){
     });
 }
 
+function getBanks(){
+    jQuery.get('/banks', function(data) {
+        console.log(data);
+        $("#bank_div").html(data["text"]);
+    });
+}
