@@ -91,7 +91,7 @@ sub GetEnvelopes
                     <div class="card-header">
                         $name
                     </div>
-                    <div class="card-body">
+                    <div class="card-body text-right">
                         <table id="envelope" class="table table-bordered"><thead><tr><th>Balance</th><th>Goal</th><th>Difference</th></tr></thead>
                         <tbody><tr><td>$balance</td><td>$goal</td><td>$diff</td></tr></tbody></table>
                         <a href="/envelope/$name" class="btn btn-primary">Manage</a>

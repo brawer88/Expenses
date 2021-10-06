@@ -2,9 +2,7 @@ html {
   position: relative;
   min-height: 100%;
 }
-body {
-  margin-bottom: 60px; /* Margin bottom by footer height */
-}
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -33,4 +31,11 @@ body {
   width:30%;
 }
 
+form{
+  padding: 15px;
+}
 
+button{
+  float:right;
+  margin: 10px;
+}

@@ -1,11 +1,16 @@
 <div id="page">
   <div id="content">
     <% IF logged_in %>
-        <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
+      <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
         <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="Expense" name="ExpenseType" class="custom-control-input" checked>
+                <label class="custom-control-label" for="Expense">Expense</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="Transfer" name="ExpenseType" class="custom-control-input">
+                <label class="custom-control-label" for="Transfer">Transfer</label>
+            </div>
         </div>
         <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
@@ -16,7 +21,7 @@
             <label class="form-check-label" for="exampleCheck1">Check me out</label>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+      </form>
     <% ELSE %>
       <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to affect your envelopes</p>
     <% END %>
