@@ -11,14 +11,17 @@
                 <input type="radio" id="Transfer" name="ExpenseType" class="custom-control-input">
                 <label class="custom-control-label" for="Transfer">Transfer</label>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            <div id="envelope_select" >
+                <% available_envelopes %>
+            </div>
+            <div>
+                <label for="amount">Amount</label>
+                <input type="number" class="form-control" id="amount" placeholder="Amount">
+            </div>
+            <div>
+                <label for="for">For:</label>
+                <textarea class="form-control" id="for" name="for" rows="3"></textarea>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
@@ -27,3 +30,19 @@
     <% END %>
   </div>
 </div>
+
+<script type="text/Javascript">
+$(document).ready(function() {
+    $('#envelope_select').hide(); 
+
+   $('input[type="radio"]').click(function() {
+       if($(this).attr('id') == 'Transfer') {
+            $('#envelope_select').show();           
+       }
+
+       else {
+            $('#envelope_select').hide();   
+       }
+   });
+});
+</script>

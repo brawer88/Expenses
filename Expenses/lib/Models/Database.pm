@@ -79,7 +79,6 @@ sub GetEnvelopes
     while ( my $row = $rs->next )
     {
         my $balance = $row->get_column("balance");
-        print "\n\n$balance\n\n";
         my $name = $row->get_column("name");
         my $goal = $row->get_column("goalamount");
         my $diff = 0;
@@ -100,6 +99,44 @@ sub GetEnvelopes
                 </div>        
         ~;
     }
+
+    return $html;
+}
+
+
+#  GetEnvelopesSelect
+#  Abstract: Gets envelopes for an html select
+#  params: ( $UID )
+#  returns: $html - the html rep of all envelopes belonging to the user
+sub GetEnvelopesSelect
+{
+    my ($self, $UID) = @_;
+    my $html;
+
+    my $rs = resultset('Envelope')->search(
+        {
+            userid => $UID
+        }
+    );
+
+    $html .= qq~<label for="transfer_to">Select the envelope to transfer to:</label>
+                <select class="form-control" name="transfer_to" id="transfer_to">
+    ~;
+
+    while ( my $row = $rs->next )
+    {
+        my $balance = $row->get_column("balance");
+        my $name = $row->get_column("name");
+        my $goal = $row->get_column("goalamount");
+        my $id = $row->get_column("envelopeid");
+        
+
+        $html .= qq~
+                    <option value="$id">$name| Balance: $balance | Goal: $goal</option>
+                ~;
+    }
+
+    $html .= qq~</select>~;
 
     return $html;
 }
