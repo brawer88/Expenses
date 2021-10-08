@@ -33,12 +33,19 @@ post '/:envelope' => sub
     my $name = param('envelope');
     my $user = session('user') // Models::User->new();
 
-    my $type = body_parameters->get('ExpenseType');
+    my $type        = body_parameters->get('ExpenseType');
     my $transfer_to = body_parameters->get('transfer_to');
-    my $amount = body_parameters->get('amount');
-    my $for = body_parameters->get('for');
+    my $amount      = body_parameters->get('amount');
+    my $for         = body_parameters->get('for');
+    my $to_name     = $db->GetEnvelopeName($transfer_to);
 
-    $db->AddExpense($name, $amount, $for);
+    if ( $type eq "Transfer" )
+    {
+        $for = qq~Transfer from $name to $to_name.~;
+        $db->AddIncome( $user->UID, $transfer_to, $name, $amount, $for, $type );
+    }
+
+    $db->AddExpense( $user->UID, $name, $amount, $for, $type );
 
     return redirect uri_for('/');
 };

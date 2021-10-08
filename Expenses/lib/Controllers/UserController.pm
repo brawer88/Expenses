@@ -13,7 +13,7 @@ prefix '/user';
 #------------------------------------------
 get '/logout' => sub
 {
-    my $user = session('user') // Models::User->new();
+    my $user     = session('user') // Models::User->new();
     my $username = $user->username;
 
     set_flash("$username logged out.");

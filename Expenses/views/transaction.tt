@@ -4,21 +4,21 @@
       <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
         <div class="form-group">
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="Expense" name="ExpenseType" class="custom-control-input" checked>
-                <label class="custom-control-label" for="Expense">Expense</label>
+                <input type="radio" id="Expense" value="Expense" name="ExpenseType" class="custom-control-input" checked>
+                <label class="custom-control-label"  for="Expense">Expense</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="Transfer" name="ExpenseType" class="custom-control-input">
-                <label class="custom-control-label" for="Transfer">Transfer</label>
+                <input type="radio" id="Transfer" value="Transfer" name="ExpenseType" class="custom-control-input">
+                <label class="custom-control-label"  for="Transfer">Transfer</label>
             </div>
             <div id="envelope_select" >
                 <% available_envelopes %>
             </div>
             <div>
                 <label for="amount">Amount</label>
-                <input type="number" class="form-control" id="amount" placeholder="Amount">
+                <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" step="0.01" required>
             </div>
-            <div>
+            <div id="for_div">
                 <label for="for">For:</label>
                 <textarea class="form-control" id="for" name="for" rows="3"></textarea>
             </div>
@@ -37,11 +37,13 @@ $(document).ready(function() {
 
    $('input[type="radio"]').click(function() {
        if($(this).attr('id') == 'Transfer') {
-            $('#envelope_select').show();           
+            $('#envelope_select').show(); 
+            $('#for_div').hide();          
        }
 
        else {
-            $('#envelope_select').hide();   
+            $('#envelope_select').hide(); 
+            $('#for_div').show();   
        }
    });
 });

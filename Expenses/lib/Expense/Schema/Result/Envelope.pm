@@ -73,6 +73,12 @@ __PACKAGE__->table("Envelope");
   is_foreign_key: 1
   is_nullable: 1
 
+=head2 autofillamount
+
+  data_type: 'decimal'
+  is_nullable: 1
+  size: [13,2]
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -88,6 +94,8 @@ __PACKAGE__->add_columns(
   { data_type => "decimal", is_nullable => 1, size => [13, 2] },
   "bankid",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
+  "autofillamount",
+  { data_type => "decimal", is_nullable => 1, size => [13, 2] },
 );
 
 =head1 PRIMARY KEY
@@ -155,8 +163,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-05 17:32:45
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nuWLJ1XTzB7ZRhBMmj0gXw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-08 09:11:40
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bU0PnXbP0M9xjh8Vq6FnOA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
