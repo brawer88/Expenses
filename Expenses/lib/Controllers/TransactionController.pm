@@ -15,12 +15,14 @@ get '/:envelope' => sub
     my $user = session('user') // Models::User->new();
 
     my $envelopes = $db->GetEnvelopesSelect( $user->UID );
+    my $balance   = $db->GetEnvelopeBalance( $user->UID, $name );
 
     template 'transaction' => {
         'title'               => 'Expenses: Add Transaction',
         'logged_in'           => $user->logged_in // 0,
         'name'                => $name,
         'available_envelopes' => $envelopes,
+        'balance'             => $balance,
         'msg'                 => get_flash()
     };
 };
@@ -42,7 +44,7 @@ post '/:envelope' => sub
     if ( $type eq "Transfer" )
     {
         $for = qq~Transfer from $name to $to_name.~;
-        $db->AddIncome( $user->UID, $transfer_to, $name, $amount, $for, $type );
+        $db->AddIncome( $user->UID, $transfer_to, $amount, $for, $type );
     }
 
     $db->AddExpense( $user->UID, $name, $amount, $for, $type );

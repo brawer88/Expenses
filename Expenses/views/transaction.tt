@@ -1,6 +1,8 @@
 <div id="page">
   <div id="content">
     <% IF logged_in %>
+    <h1><small class="text-muted">Add Transaction for <% name %></small></h1>
+    <h2><small class="text-muted">Available balance: <% balance %></small></h2>
       <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
         <div class="form-group">
             <div class="custom-control custom-radio custom-control-inline">

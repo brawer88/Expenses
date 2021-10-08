@@ -1,0 +1,22 @@
+<div id="page">
+  <div id="content">
+    <% IF logged_in %>
+    <h1>Add a Bank</h1>
+      <form method="post" action="<% request.uri_base %>/user/addbank">
+        <div class="form-group">
+            <div>
+                <label for="amount">Name</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required>
+            </div>
+            <div>
+                <label for="amount">Starting Balance</label>
+                <input type="number" class="form-control" name="balance" id="balance" placeholder="Starting Balance" step="0.01" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    <% ELSE %>
+      <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to add a bank.</p>
+    <% END %>
+  </div>
+</div>

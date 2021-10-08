@@ -61,6 +61,12 @@ __PACKAGE__->table("Bank");
   is_foreign_key: 1
   is_nullable: 0
 
+=head2 unallocated
+
+  data_type: 'decimal'
+  is_nullable: 1
+  size: [13,2]
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -72,6 +78,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 0, size => 45 },
   "userid",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
+  "unallocated",
+  { data_type => "decimal", is_nullable => 1, size => [13, 2] },
 );
 
 =head1 PRIMARY KEY
@@ -134,8 +142,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-05 17:32:45
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:q4agxeuppM3tyV7T3VVzuA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-08 13:46:40
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:F3XDUFW4eUhMDkNPsP341Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

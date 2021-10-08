@@ -1,0 +1,37 @@
+<div id="page">
+  <div id="content">
+    <% IF logged_in %>
+        <% IF has_bank %>
+            <h1>Add an Envelope</h1>
+            <form method="post" action="<% request.uri_base %>/user/addenvelope">
+                <div class="form-group">
+                    <div>
+                        <label for="amount">Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="My Envelope" required>
+                    </div>
+                    <div>
+                        <% banks %>
+                    </div>
+                    <div>
+                        <label for="balance">Starting Balance</label>
+                        <input type="number" class="form-control" name="balance" id="balance" placeholder="Balance" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="goal">Goal Amount</label>
+                        <input type="number" class="form-control" name="goal" id="goal" placeholder="Goal" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="autofill">Autofill Amount</label>
+                        <input type="number" class="form-control" name="autofill" id="autofill" placeholder="Autofill" step="0.01" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        <% ELSE %>
+          <p>Please <a href="<% request.uri_base %>/user/addbank">add bank</a> before adding an envelope.</p>
+        <% END %>
+    <% ELSE %>
+      <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to add a bank.</p>
+    <% END %>
+  </div>
+</div>

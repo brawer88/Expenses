@@ -170,20 +170,58 @@ sub GetBanks
                 <div class="jumbotron jumbotron-fluid">
                     <div class="container">
                         <h1 class="display-4">Banks</h1>
-                            <table id="envelope" class="table table-bordered"><thead><tr><th>&nbsp;</th><th>Name</th><th>Balance</th></tr></thead><tbody>
+                            <table id="envelope" class="table table-bordered"><thead><tr><th>Name</th><th>Balance</th><th>Unallocated</th></tr></thead><tbody>
             ~;
     while ( my $row = $rs->next )
     {
         my $balance = $row->get_column("balance");
-        print "\n\n$balance\n\n";
-        my $name = $row->get_column("name");
+        my $unall   = $row->get_column("unallocated");
+        my $name    = $row->get_column("name");
 
         $html .= qq~
-                    <tr><td><a href="/bank/$name" class="btn btn-primary">Manage</a></td><td>$name</td><td>$balance</td></tr>
+                    <tr><td>$name</td><td>$balance</td><td>$unall</td></tr>
                  ~;
     }
 
     $html .= qq~</tbody></table></div></div>~;
+
+    return $html;
+}
+
+#  GetBanks
+#  Abstract: Gets Banks
+#  params: ( $UID )
+#  returns: $html - the html rep of all envelopes belonging to the user
+sub GetBanksSelect
+{
+    my ( $self, $UID ) = @_;
+    my $html;
+
+    my $rs = resultset('Bank')->search(
+        {
+            userid => $UID
+        }
+    );
+
+    if ($rs)
+    {
+        $html .= qq~<label for="banks">Select the Bank this belongs to:</label>
+                <select class="form-control" name="banks" id="banks">
+        ~;
+
+        while ( my $row = $rs->next )
+        {
+            my $unall = $row->get_column("unallocated");
+            my $name  = $row->get_column("name");
+            my $id    = $row->get_column("bankid");
+
+            $html .= qq~
+                        <option value="$id">$name| Unallocated: $unall</option>
+                    ~;
+        }
+
+        $html .= qq~</select>~;
+    }
 
     return $html;
 }
@@ -213,7 +251,7 @@ sub AddExpense
     );
 
     my $bankid = $envelope_rs->get_column("bankid");
-    my $envid = $envelope_rs->get_column("envelopeid");
+    my $envid  = $envelope_rs->get_column("envelopeid");
 
     my $bank_rs = resultset('Bank')->single(
         {
@@ -222,25 +260,39 @@ sub AddExpense
     );
 
     my $bank_balance     = $bank_rs->get_column("balance");
-    my $new_bank_balance = $bank_balance - $amount;
+    my $unallocated      = $bank_rs->get_column("unallocated");
+    
 
-    $bank_rs->update(
-        {
-            balance => $new_bank_balance
-        }
-    );
-  
+    if ($type eq "Transfer" && $bank_balance != $unallocated)
+    {
+        my $new_unallocated = $unallocated + $amount;
+        $bank_rs->update(
+            {
+                unallocated => $new_unallocated
+            }
+        );
+    }
+    elsif ($type eq "Expense")
+    {
+        my $new_bank_balance = $bank_balance - $amount;
+        $bank_rs->update(
+            {
+                balance => $new_bank_balance
+            }
+        );
+    }
+
     my $time = localtime->mysql_datetime;
 
     my $transaction_rs = resultset('Transaction')->create(
         {
             envelopeid => $envid,
-            bankid => $bankid,
-            userid => $UID,
-            amount => $amount,
-            for => $for,
-            date => $time,
-            type => $type
+            bankid     => $bankid,
+            userid     => $UID,
+            amount     => $amount,
+            reason     => $for,
+            date       => $time,
+            type       => $type
         }
     );
 
@@ -248,11 +300,74 @@ sub AddExpense
 
 #  AddIncome
 #  Abstract: Adds income to envelope and connected bank
-#  params: ( $UID, $transfer_to, $transfer_from, $amount, $for, $type )
+#  params: ( $UID, $transfer_to, $amount, $for, $type )
 #  returns: $result - the status of updates
 sub AddIncome
 {
-    my ( $self, $UID, $transfer_to, $transfer_from, $amount, $for, $type ) = @_;
+    my ( $self, $UID, $transfer_to, $amount, $for, $type ) = @_;
+
+    my $envelope_rs = resultset('Envelope')->single(
+        {
+            userid     => $UID,
+            envelopeid => $transfer_to
+        }
+    );
+
+    my $balance     = $envelope_rs->get_column("balance");
+    my $new_balance = $balance + $amount;
+
+    $envelope_rs->update(
+        {
+            balance => $new_balance
+        }
+    );
+
+    my $bankid = $envelope_rs->get_column("bankid");
+    my $envid  = $envelope_rs->get_column("envelopeid");
+
+    my $bank_rs = resultset('Bank')->single(
+        {
+            bankid => $bankid
+        }
+    );
+
+    my $bank_balance     = $bank_rs->get_column("balance");
+    my $unallocated      = $bank_rs->get_column("unallocated");
+    
+
+    if ($type eq "Transfer")
+    {
+        my $new_unallocated = $unallocated - $amount;
+        $bank_rs->update(
+            {
+                unallocated => $new_unallocated
+            }
+        );
+    }
+    else
+    {
+        my $new_bank_balance = $bank_balance + $amount;
+        $bank_rs->update(
+            {
+                balance => $new_bank_balance
+            }
+        );
+    }
+
+   
+    my $time = localtime->mysql_datetime;
+
+    my $transaction_rs = resultset('Transaction')->create(
+        {
+            envelopeid => $envid,
+            bankid     => $bankid,
+            userid     => $UID,
+            amount     => $amount,
+            reason     => $for,
+            date       => $time,
+            type       => $type
+        }
+    );
 }
 
 #  GetEnvelopeName
@@ -272,6 +387,68 @@ sub GetEnvelopeName
     my $name = $envelope_rs->get_column("name");
 
     return $name;
+}
+
+#  sub GetEnvelopeBalance
+#  Abstract: Adds income to envelope and connected bank
+#  params: ( $UID, $name )
+#  returns: $balance - the balance of the envelope
+sub GetEnvelopeBalance
+{
+    my ( $self, $UID, $name ) = @_;
+
+    my $envelope_rs = resultset('Envelope')->search(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    )->single;
+
+    my $balance = $envelope_rs->get_column("balance");
+
+    return $balance;
+}
+
+#  sub AddBank
+#  Abstract: Adds bank to user account
+#  params: ( $UID, $name, $balance )
+#  returns: $result - the result
+sub AddBank
+{
+    my ( $self, $UID, $name, $balance ) = @_;
+
+    my $result = resultset('Bank')->create(
+        {
+            userid      => $UID,
+            name        => $name,
+            balance     => $balance,
+            unallocated => $balance
+        }
+    );
+
+    return $result;
+}
+
+#  sub AddEnvelope
+#  Abstract: Adds envelope to user account
+#  params: ( $UID, $name, $balance, $goal, $bank_id, $autofill )
+#  returns: $result - the result
+sub AddEnvelope
+{
+    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill ) = @_;
+
+    my $result = resultset('Envelope')->create(
+        {
+            userid         => $UID,
+            name           => $name,
+            balance        => $balance,
+            goalamount     => $goal,
+            autofillamount => $autofill,
+            bankid         => $bank_id
+        }
+    );
+
+    return $result;
 }
 
 #------------------------------------------

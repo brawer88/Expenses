@@ -49,10 +49,10 @@ __PACKAGE__->table("Transaction");
   is_nullable: 0
   size: [13,2]
 
-=head2 for
+=head2 reason
 
   data_type: 'varchar'
-  is_nullable: 1
+  is_nullable: 0
   size: 255
 
 =head2 envelopeid
@@ -92,8 +92,8 @@ __PACKAGE__->add_columns(
   { data_type => "bigint", is_auto_increment => 1, is_nullable => 0 },
   "amount",
   { data_type => "decimal", is_nullable => 0, size => [13, 2] },
-  "for",
-  { data_type => "varchar", is_nullable => 1, size => 255 },
+  "reason",
+  { data_type => "varchar", is_nullable => 0, size => 255 },
   "envelopeid",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
   "date",
@@ -179,8 +179,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-02 14:36:41
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pOKszufSMKadI19SJdXuFw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-08 12:39:48
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:u7UD3SfPwS+dQMOKRwr3OQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

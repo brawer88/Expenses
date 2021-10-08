@@ -31,6 +31,9 @@
       <% IF logged_in %>
         <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user/logout">Logout</a></li>
         <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user">Account</a></li>
+        <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user/addbank">Add Bank</a></li>
+        <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user/addenvelope">Add Envelope</a></li>
+        <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user/addpaycheck">Add Paycheck</a></li>
       <% ELSE %>
         <li class="nav-item"><a class="nav-item nav-link" href="<% request.uri_base %>/user/login">Login</a></li>
       <% END %>
