@@ -72,8 +72,8 @@ get '/addbank' => sub
     my $user = session('user') // Models::User->new();
 
     template 'addbank' => {
-        'title'     => 'Expenses: Login',
-        'pageTitle' => 'Login',
+        'title'     => 'Expenses: Add Bank',
+        'pageTitle' => 'Add Bank',
         'logged_in' => $user->logged_in // 0,
     };
 };
@@ -99,8 +99,8 @@ post '/addbank' => sub
     {
         set_flash("Adding bank failed.");
         template 'addbank' => {
-            'title'     => 'Expenses: Login',
-            'pageTitle' => 'Login',
+            'title'     => 'Expenses: Add Bank',
+            'pageTitle' => 'Add Bank',
             'msg'       => Models::Utilities::get_flash(),
             'logged_in' => $user->logged_in // 0,
         };
@@ -120,10 +120,11 @@ get '/addenvelope' => sub
     $has_bank = FALSE if ( !$banks );
 
     template 'addenvelope' => {
-        'title'     => 'Expenses: Login',
-        'pageTitle' => 'Login',
+        'title'     => 'Expenses: Add Envelope',
+        'pageTitle' => 'Add Envelope',
         'banks'     => $banks,
         'has_bank'  => $has_bank,
+        'msg'       => Models::Utilities::get_flash(),
         'logged_in' => $user->logged_in // 0,
     };
 };
@@ -138,10 +139,8 @@ post '/addenvelope' => sub
     my $name     = body_parameters->get('name');
     my $balance  = body_parameters->get('balance');
     my $goal     = body_parameters->get('goal');
-    my $bank_id  = body_parameters->get('bank');
+    my $bank_id  = body_parameters->get('banks');
     my $autofill = body_parameters->get('autofill');
-
-    
 
     my $result =
       $db->AddEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill );
@@ -155,8 +154,8 @@ post '/addenvelope' => sub
     {
         set_flash("Adding envelope failed.");
         template 'addenvelope' => {
-            'title'     => 'Expenses: Login',
-            'pageTitle' => 'Login',
+            'title'     => 'Expenses: Add Envelope',
+            'pageTitle' => 'Add Envelope',
             'msg'       => Models::Utilities::get_flash(),
             'logged_in' => $user->logged_in // 0,
         };
@@ -168,11 +167,16 @@ post '/addenvelope' => sub
 #------------------------------------------
 get '/addpaycheck' => sub
 {
-    my $user = session('user') // Models::User->new();
+    my $user     = session('user') // Models::User->new();
+    my $banks    = $db->GetBanksSelect( $user->UID );
+    my $autofill = $db->GetAutofillCheckboxes( $user->UID );
 
     template 'addpaycheck' => {
-        'title'     => 'Expenses: Login',
-        'pageTitle' => 'Login',
+        'title'     => 'Expenses: Add Paycheck',
+        'pageTitle' => 'Add Paycheck',
+        'banks'     => $banks,
+        'autofill'  => $autofill,
+        'msg'       => Models::Utilities::get_flash(),
         'logged_in' => $user->logged_in // 0,
     };
 };
@@ -184,11 +188,115 @@ post '/addpaycheck' => sub
 {
     my $user = session('user') // Models::User->new();
 
-    template 'addpaycheck' => {
-        'title'     => 'Expenses: Login',
-        'pageTitle' => 'Login',
+    my @autofill = body_parameters->get_all('autofill');
+    my $bank_id  = body_parameters->get('banks');
+    my $amount   = body_parameters->get('amount');
+
+    my $result = $db->AddPaycheck( $user->UID, $bank_id, $amount, \@autofill );
+
+    if ($result)
+    {
+        set_flash("Added paycheck successfully.");
+        return redirect uri_for('/');
+    }
+    else
+    {
+        set_flash("Adding paycheck failed.");
+        return redirect uri_for('/user/addpaycheck');
+    }
+};
+
+#------------------------------------------
+#   Get method for adding a bank
+#------------------------------------------
+get '/fillenvelope' => sub
+{
+    my $user = session('user') // Models::User->new();
+
+    my $banks     = $db->GetBanksSelect( $user->UID );
+    my $envelopes = $db->GetEnvelopesSelect( $user->UID );
+
+    template 'fillenvelope' => {
+        'title'     => 'Expenses: Fill Envelope',
+        'pageTitle' => 'Fill Envelope',
+        'banks'     => $banks,
+        'envelopes' => $envelopes,
+        'msg'       => Models::Utilities::get_flash(),
         'logged_in' => $user->logged_in // 0,
     };
+};
+
+#------------------------------------------
+#   Post method for adding a paycheck
+#------------------------------------------
+post '/fillenvelope' => sub
+{
+    my $user = session('user') // Models::User->new();
+
+    my $bank_id     = body_parameters->get('banks');
+    my $transfer_to = body_parameters->get('transfer_to');
+    my $amount      = body_parameters->get('amount');
+
+    my $result = $db->FillEnvelope( $user->UID, $transfer_to, $bank_id, $amount );
+    my $name   = $db->GetEnvelopeName($transfer_to);
+
+    if ($result)
+    {
+        set_flash("Filled envelope $name successfully.");
+        return redirect uri_for('/');
+    }
+    else
+    {
+        set_flash("Filling envelope failed.");
+        return redirect uri_for('/user/fillenvelope');
+    }
+};
+
+#------------------------------------------
+#   Get method for adding a bank
+#------------------------------------------
+get '/create' => sub
+{
+    my $user = session('user') // Models::User->new();
+
+    template 'create' => {
+        'title'     => 'Expenses: Create Account',
+        'pageTitle' => 'Create Account',
+        'msg'       => Models::Utilities::get_flash(),
+        'logged_in' => $user->logged_in // 0,
+    };
+};
+
+#------------------------------------------
+#   Post method for adding a paycheck
+#------------------------------------------
+post '/create' => sub
+{
+    my $username = body_parameters->get('user');
+    my $password = body_parameters->get('password');
+    my $fname    = body_parameters->get('fname');
+    my $lname    = body_parameters->get('lname');
+
+    my $user = $db->CreateAccount( $username, $password, $fname, $lname );
+    
+    
+    session user => $user if ($user->logged_in);
+
+    my $name    = body_parameters->get('name');
+    my $balance = body_parameters->get('balance');
+
+    my $result = $db->AddBank( $user->UID, $name, $balance );
+
+    if ($result)
+    {
+        set_flash("Account created successfully. Please add your first envelope:");
+        return redirect uri_for('/user/addenvelope');
+    }
+    else
+    {
+        set_flash("Account creation failed.");
+        return redirect uri_for('/user/create');
+    }
 };
 
 #------------------------------------------

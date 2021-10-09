@@ -10,10 +10,10 @@
         <% END %>
         <div class="form-group">
           <label for="user">Username:</label>
-          <input id="user" name="user" type="text" value=<% user %>>
+          <input class="form-control" id="user" name="user" type="text" value=<% user %>>
           <label for="password">Password:</label>
-          <input id="password" name="password" type="password" value=<% password %> >
-          <input type="submit" value="Submit">
+          <input class="form-control" id="password" name="password" type="password" value=<% password %> >
+          <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form> 
   </div>

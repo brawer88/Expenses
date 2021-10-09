@@ -130,8 +130,7 @@ sub GetEnvelopesSelect
         }
     );
 
-    $html .= qq~<label for="transfer_to">Select the envelope to transfer to:</label>
-                <select class="form-control" name="transfer_to" id="transfer_to">
+    $html .= qq~<select class="form-control" name="transfer_to" id="transfer_to">
     ~;
 
     while ( my $row = $rs->next )
@@ -147,6 +146,41 @@ sub GetEnvelopesSelect
     }
 
     $html .= qq~</select>~;
+
+    return $html;
+}
+
+#  GetAutofillCheckboxes
+#  Abstract: Gets envelopes for an html checkbox group
+#  params: ( $UID )
+#  returns: $html - the html rep of all envelopes belonging to the user
+sub GetAutofillCheckboxes
+{
+    my ( $self, $UID ) = @_;
+    my $html;
+
+    my $rs = resultset('Envelope')->search(
+        {
+            userid => $UID
+        }
+    );
+
+    while ( my $row = $rs->next )
+    {
+        my $balance  = $row->get_column("balance");
+        my $name     = $row->get_column("name");
+        my $goal     = $row->get_column("goalamount");
+        my $autofill = $row->get_column("goalamount");
+        my $id       = $row->get_column("envelopeid");
+
+        $html .= qq~<div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="$id" id="$name+$id" name="autofill">
+                        <label class="form-check-label" for="autofill">
+                            $name | Balance: $balance | Goal: $goal | Autofill: $autofill
+                        </label>
+                    </div>
+                ~;
+    }
 
     return $html;
 }
@@ -205,7 +239,7 @@ sub GetBanksSelect
 
     if ($rs)
     {
-        $html .= qq~<label for="banks">Select the Bank this belongs to:</label>
+        $html .= qq~
                 <select class="form-control" name="banks" id="banks">
         ~;
 
@@ -228,11 +262,11 @@ sub GetBanksSelect
 
 #  AddExpense
 #  Abstract: Adds expense to envelope and connected bank
-#  params: ( $UID, $name, $amount, $for, $type )
+#  params: ( $UID, $name, $amount, $for, $type, $transfer_to )
 #  returns: $result - the status of updates
 sub AddExpense
 {
-    my ( $self, $UID, $name, $amount, $for, $type ) = @_;
+    my ( $self, $UID, $name, $amount, $for, $type, $transfer_to ) = @_;
 
     my $envelope_rs = resultset('Envelope')->single(
         {
@@ -259,20 +293,40 @@ sub AddExpense
         }
     );
 
-    my $bank_balance     = $bank_rs->get_column("balance");
-    my $unallocated      = $bank_rs->get_column("unallocated");
-    
+    my $other_env_rs = resultset('Envelope')->single(
+        {
+            envelopeid => $transfer_to
+        }
+    );
 
-    if ($type eq "Transfer" && $bank_balance != $unallocated)
+    my $other_env    = $other_env_rs->get_column("name");
+    my $bank_balance = $bank_rs->get_column("balance");
+    my $unallocated  = $bank_rs->get_column("unallocated");
+
+    if ( $type eq "Transfer" && $bank_balance != $unallocated )
     {
-        my $new_unallocated = $unallocated + $amount;
-        $bank_rs->update(
-            {
-                unallocated => $new_unallocated
-            }
-        );
+        $for = qq~Transfer from $name to $other_env.~;
+        if ( $transfer_to == $bankid )
+        {
+            my $new_unallocated = $unallocated + $amount;
+            $bank_rs->update(
+                {
+                    unallocated => $new_unallocated
+                }
+            );
+        }
+        else
+        {
+            my $new_bank_balance = $bank_balance - $amount;
+            $bank_rs->update(
+                {
+                    balance => $new_bank_balance
+                }
+            );
+        }
+
     }
-    elsif ($type eq "Expense")
+    elsif ( $type eq "Expense" )
     {
         my $new_bank_balance = $bank_balance - $amount;
         $bank_rs->update(
@@ -300,11 +354,11 @@ sub AddExpense
 
 #  AddIncome
 #  Abstract: Adds income to envelope and connected bank
-#  params: ( $UID, $transfer_to, $amount, $for, $type )
+#  params: ( $UID, $transfer_to, $amount, $for, $type, $name )
 #  returns: $result - the status of updates
 sub AddIncome
 {
-    my ( $self, $UID, $transfer_to, $amount, $for, $type ) = @_;
+    my ( $self, $UID, $transfer_to, $amount, $for, $type, $name ) = @_;
 
     my $envelope_rs = resultset('Envelope')->single(
         {
@@ -312,6 +366,15 @@ sub AddIncome
             envelopeid => $transfer_to
         }
     );
+
+    my $other_envelope_rs = resultset('Envelope')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    my $transfer_from = $other_envelope_rs->get_column("bankid");
 
     my $balance     = $envelope_rs->get_column("balance");
     my $new_balance = $balance + $amount;
@@ -331,18 +394,29 @@ sub AddIncome
         }
     );
 
-    my $bank_balance     = $bank_rs->get_column("balance");
-    my $unallocated      = $bank_rs->get_column("unallocated");
-    
+    my $bank_balance = $bank_rs->get_column("balance");
+    my $unallocated  = $bank_rs->get_column("unallocated");
 
-    if ($type eq "Transfer")
+    if ( $type eq "Transfer" )
     {
-        my $new_unallocated = $unallocated - $amount;
-        $bank_rs->update(
-            {
-                unallocated => $new_unallocated
-            }
-        );
+        if ( $transfer_from == $transfer_to )
+        {
+            my $new_unallocated = $unallocated - $amount;
+            $bank_rs->update(
+                {
+                    unallocated => $new_unallocated
+                }
+            );
+        }
+        else
+        {
+            my $new_bank_balance = $bank_balance + $amount;
+            $bank_rs->update(
+                {
+                    balance => $new_bank_balance
+                }
+            );
+        }
     }
     else
     {
@@ -354,7 +428,6 @@ sub AddIncome
         );
     }
 
-   
     my $time = localtime->mysql_datetime;
 
     my $transaction_rs = resultset('Transaction')->create(
@@ -441,14 +514,214 @@ sub AddEnvelope
         {
             userid         => $UID,
             name           => $name,
-            balance        => $balance,
+            balance        => 0,
             goalamount     => $goal,
             autofillamount => $autofill,
             bankid         => $bank_id
         }
     );
 
+    my $env_id = $result->get_column("envelopeid");
+
+    FillEnvelope( $self, $UID, $env_id, $bank_id, $balance );
+
     return $result;
+}
+
+#  sub FillEnvelope
+#  Abstract: Adds to envelope from unallocated
+#  params: ( $UID, $env_id, $bank_id, $amount )
+#  returns: $result - the result
+sub FillEnvelope
+{
+    my ( $self, $UID, $env_id, $bank_id, $amount ) = @_;
+
+    my $bank_rs = resultset('Bank')->single(
+        {
+            bankid => $bank_id
+        }
+    );
+
+    my $bank_name   = $bank_rs->get_column("name");
+    my $unallocated = $bank_rs->get_column("unallocated");
+
+    my $new_unallocated = $unallocated - $amount;
+    $bank_rs->update(
+        {
+            unallocated => $new_unallocated
+        }
+    );
+
+    my $envelope_rs = resultset('Envelope')->single(
+        {
+            envelopeid => $env_id
+        }
+    );
+
+    my $name        = $envelope_rs->get_column("name");
+    my $balance     = $envelope_rs->get_column("balance");
+    my $new_balance = $balance + $amount;
+
+    $envelope_rs->update(
+        {
+            balance => $new_balance
+        }
+    );
+
+    my $for  = qq~Filling $name from unallocated in $bank_name.~;
+    my $time = localtime->mysql_datetime;
+
+    my $transaction_rs = resultset('Transaction')->create(
+        {
+            envelopeid => $env_id,
+            bankid     => $bank_id,
+            userid     => $UID,
+            amount     => $amount,
+            reason     => $for,
+            date       => $time,
+            type       => "Income"
+        }
+    );
+}
+
+#  sub GetTransactions
+#  Abstract: Gets transactions in desc order
+#  params: ( $UID, $env_id, $bank_id, $amount )
+#  returns: $result - the result
+sub GetTransactions
+{
+    my ( $self, $UID ) = @_;
+    my $html;
+
+    my $rs = resultset('Transaction')->search(
+        {
+            userid => $UID,
+        },
+        {
+            order_by => { -desc => 'transactionid' }
+        }
+    );
+
+    $html .= qq~<div class="container">
+                    <table id="trans" class="table table-bordered"><thead><tr><th>Envelope</th><th>Type</th><th>Amount</th><th>Reason</th></tr></thead><tbody>
+            ~;
+    while ( my $row = $rs->next )
+    {
+        my $type    = $row->get_column("type");
+        my $amount  = $row->get_column("amount");
+        my $reason  = $row->get_column("reason");
+        my $env_id  = $row->get_column("envelopeid");
+        my $bank_id = $row->get_column("bankid");
+
+        if ($env_id)
+        {
+            my $env_rs = resultset("Envelope")->single(
+                {
+                    envelopeid => $env_id
+                }
+            );
+
+            my $env_name = $env_rs->get_column("name");
+            $html .= qq~
+                    <tr><td>$env_name</td><td>$type</td><td>$amount</td><td>$reason</td></tr>
+                 ~;
+        }
+        else
+        {
+            my $bank_rs = resultset("Bank")->single(
+                {
+                    bankid => $bank_id
+                }
+            );
+
+            my $bank_name = $bank_rs->get_column("name");
+
+            $html .= qq~
+                    <tr><td>$bank_name</td><td>$type</td><td>$amount</td><td>$reason</td></tr>
+                 ~;
+
+        }
+
+    }
+
+    $html .= qq~</tbody></table></div>~;
+
+    return $html;
+
+}
+
+sub AddPaycheck
+{
+    my ( $self, $UID, $bank_id, $amount, $autofill ) = @_;
+
+    my $bank_rs = resultset('Bank')->single(
+        {
+            bankid => $bank_id
+        }
+    );
+
+    my $bank_name   = $bank_rs->get_column("name");
+    my $unallocated = $bank_rs->get_column("unallocated");
+    my $balance     = $bank_rs->get_column("balance");
+
+    my $new_unallocated = $unallocated + $amount;
+    $bank_rs->update(
+        {
+            unallocated => $new_unallocated,
+            balance     => $balance
+        }
+    );
+
+    my $for  = qq~Paycheck deposited into $bank_name.~;
+    my $time = localtime->mysql_datetime;
+
+    my $transaction_rs = resultset('Transaction')->create(
+        {
+            bankid => $bank_id,
+            userid => $UID,
+            amount => $amount,
+            reason => $for,
+            date   => $time,
+            type   => "Income"
+        }
+    );
+
+    foreach my $env_id (@$autofill)
+    {
+        my $envelope_rs = resultset('Envelope')->single(
+            {
+                envelopeid => $env_id
+            }
+        );
+
+        my $amount = $envelope_rs->get_column("autofillamount");
+
+        FillEnvelope( $self, $UID, $env_id, $bank_id, $amount );
+    }
+
+    return $transaction_rs;
+}
+
+sub CreateAccount
+{
+    my ( $self, $username, $password, $fname, $lname ) = @_;
+
+    my $password_hash = passphrase($password )->generate;
+
+    my $rs = resultset("User")->create(
+        {
+            username  => $username,
+            password  => $password_hash->rfc2307(),
+            firstname => $fname,
+            lastname  => $lname
+        }
+    );
+
+    my $user = Login( $self, $username, $password );
+
+    my $uid = $user->UID;
+    print "\n\n$uid\n\n";
+    return $user;
 }
 
 #------------------------------------------

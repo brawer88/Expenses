@@ -1,0 +1,10 @@
+<div id="page">
+  <div id="content">
+    <% IF logged_in %>
+    <h1>Transactions</h1>
+    <div id="trans_div"><% transactions %></div>
+    <% ELSE %>
+      <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to view transactions.</p>
+    <% END %>
+  </div>
+</div>

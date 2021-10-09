@@ -1,0 +1,37 @@
+<div id="page">
+  <div id="content">
+    <h1>Create Account in below</h1>
+    <form action="<% request.uri_base %>/user/create"  method="post">
+        <div class="form-group">
+          <div>
+            <label for="user">Username:</label>
+            <input class="form-control" id="user" name="user" type="text" >
+          </div>
+          <div>
+            <label for="password">Password:</label>
+            <input class="form-control" id="password" name="password" type="password"  >
+          </div>
+          <div>
+            <label for="fname">First Name:</label>
+            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" required>
+          </div>
+          <div>
+            <label for="lname">Last Name:</label>
+            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" required>
+          </div>
+        <h1>Add a Bank</h1>
+        <div class="form-group">
+            <div>
+                <label for="name">Name</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required>
+            </div>
+            <div>
+                <label for="balance">Starting Balance</label>
+                <input type="number" class="form-control" name="balance" id="balance" placeholder="Starting Balance" step="0.01" required>
+            </div>
+        </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form> 
+  </div>
+</div> 

@@ -10,6 +10,7 @@
                         <input type="text" class="form-control" name="name" id="name" placeholder="My Envelope" required>
                     </div>
                     <div>
+                        <label for="banks">Select the Bank this belongs to:</label>
                         <% banks %>
                     </div>
                     <div>

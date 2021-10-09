@@ -59,7 +59,7 @@ __PACKAGE__->table("Transaction");
 
   data_type: 'bigint'
   is_foreign_key: 1
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 date
 
@@ -95,7 +95,7 @@ __PACKAGE__->add_columns(
   "reason",
   { data_type => "varchar", is_nullable => 0, size => 255 },
   "envelopeid",
-  { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
+  { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
   "date",
   {
     data_type => "datetime",
@@ -160,7 +160,12 @@ __PACKAGE__->belongs_to(
   "envelopeid",
   "Expense::Schema::Result::Envelope",
   { envelopeid => "envelopeid" },
-  { is_deferrable => 1, on_delete => "RESTRICT", on_update => "RESTRICT" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "RESTRICT",
+    on_update     => "RESTRICT",
+  },
 );
 
 =head2 userid
@@ -179,8 +184,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-08 12:39:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:u7UD3SfPwS+dQMOKRwr3OQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-09 12:10:19
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:PioSSDyWD8/9NBzxCd1hRw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

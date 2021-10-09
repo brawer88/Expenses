@@ -9,6 +9,23 @@ prefix '/transaction';
 #------------------------------------------
 #   Get method for transaction page
 #------------------------------------------
+get '/view' => sub
+{
+    my $user = session('user') // Models::User->new();
+
+    my $trans = $db->GetTransactions( $user->UID );
+
+    template 'viewtransactions' => {
+        'title'        => 'Expenses: View Transactions',
+        'logged_in'    => $user->logged_in // 0,
+        'transactions' => $trans,
+        'msg'          => get_flash()
+    };
+};
+
+#------------------------------------------
+#   Get method for transaction page
+#------------------------------------------
 get '/:envelope' => sub
 {
     my $name = param('envelope');
@@ -41,13 +58,13 @@ post '/:envelope' => sub
     my $for         = body_parameters->get('for');
     my $to_name     = $db->GetEnvelopeName($transfer_to);
 
+    $db->AddExpense( $user->UID, $name, $amount, $for, $type, $transfer_to );
+
     if ( $type eq "Transfer" )
     {
         $for = qq~Transfer from $name to $to_name.~;
-        $db->AddIncome( $user->UID, $transfer_to, $amount, $for, $type );
+        $db->AddIncome( $user->UID, $transfer_to, $amount, $for, $type, $name );
     }
-
-    $db->AddExpense( $user->UID, $name, $amount, $for, $type );
 
     return redirect uri_for('/');
 };

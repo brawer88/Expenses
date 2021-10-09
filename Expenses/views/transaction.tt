@@ -14,6 +14,7 @@
                 <label class="custom-control-label"  for="Transfer">Transfer</label>
             </div>
             <div id="envelope_select" >
+                <label for="transfer_to">Select the envelope to transfer to:</label>
                 <% available_envelopes %>
             </div>
             <div>
