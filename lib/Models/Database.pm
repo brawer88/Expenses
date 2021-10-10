@@ -174,13 +174,18 @@ sub GetAutofillCheckboxes
         my $autofill = $row->get_column("goalamount");
         my $id       = $row->get_column("envelopeid");
 
-        $html .= qq~<div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="$id" id="$name+$id" name="autofill">
-                        <label class="form-check-label" for="autofill">
-                            $name | Balance: $balance | Goal: $goal | Autofill: $autofill
-                        </label>
-                    </div>
-                ~;
+        if ($autofill > 0)
+        {
+            $html .= qq~<div class="form-check">
+                <input class="form-check-input" type="checkbox" value="$id" id="$name+$id" name="autofill">
+                <label class="form-check-label" for="autofill">
+                    $name | Balance: $balance | Goal: $goal | Autofill: $autofill
+                </label>
+            </div>
+             ~;
+        }
+
+
     }
 
     return $html;
