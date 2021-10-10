@@ -99,7 +99,6 @@ sub DESTROY
 {
     # DEFINE Destructors
     my ($self) = @_;
-    print "User Destroyed :P";
 }
 
 1;

@@ -104,8 +104,8 @@ sub GetEnvelopes
                         $name
                     </div>
                     <div class="card-body text-right">
-                        <table id="envelope" class="table table-bordered"><thead><tr><th>Due</th><th>Balance</th><th>Goal</th><th>Difference</th><th>Bank</th></tr></thead>
-                        <tbody><tr><td>$due</td><td>$balance</td><td>$goal</td><td>$diff</td><td>$bank</td></tr></tbody></table>
+                        <table id="envelope" class="table table-bordered"><thead><tr><th>Due</th><th>Balance</th><th>Goal</th><th>Bank</th></tr></thead>
+                        <tbody><tr><td>$due</td><td>$balance</td><td>$goal</td><td>$bank</td></tr></tbody></table>
                         <a href="/envelope/$name" class="btn btn-primary">Manage</a>
                         <a href="/transaction/$name" class="btn btn-primary">Add Transaction</a>
                     </div>
@@ -142,7 +142,7 @@ sub GetEnvelopesSelect
         my $id      = $row->get_column("envelopeid");
 
         $html .= qq~
-                    <option value="$id">$name| Balance: $balance | Goal: $goal</option>
+                    <option value="$id">$name | Balance: $balance | Goal: $goal</option>
                 ~;
     }
 
@@ -613,11 +613,12 @@ sub GetTransactions
     );
 
     $html .= qq~<div class="container">
-                    <table id="trans" class="table table-bordered"><thead><tr><th>Envelope</th><th>Type</th><th>Amount</th><th>Reason</th></tr></thead><tbody>
+                    <table id="trans" class="table table-bordered"><thead><tr><th>Envelope</th><th>Type</th><th>Date</th><th>Amount</th><th>Reason</th></tr></thead><tbody>
             ~;
     while ( my $row = $rs->next )
     {
         my $type    = $row->get_column("type");
+        my $date    = $row->get_column("date");
         my $amount  = $row->get_column("amount");
         my $reason  = $row->get_column("reason");
         my $env_id  = $row->get_column("envelopeid");
@@ -633,7 +634,7 @@ sub GetTransactions
 
             my $env_name = $env_rs->get_column("name");
             $html .= qq~
-                    <tr><td>$env_name</td><td>$type</td><td>$amount</td><td>$reason</td></tr>
+                    <tr><td>$env_name</td><td>$type</td><td>$date</td><td>$amount</td><td>$reason</td></tr>
                  ~;
         }
         else
@@ -647,7 +648,7 @@ sub GetTransactions
             my $bank_name = $bank_rs->get_column("name");
 
             $html .= qq~
-                    <tr><td>$bank_name</td><td>$type</td><td>$amount</td><td>$reason</td></tr>
+                    <tr><td>$bank_name</td><td>$type</td><td>$date</td><td>$amount</td><td>$reason</td></tr>
                  ~;
 
         }
@@ -730,7 +731,6 @@ sub CreateAccount
     my $user = Login( $self, $username, $password );
 
     my $uid = $user->UID;
-    print "\n\n$uid\n\n";
     return $user;
 }
 
@@ -741,7 +741,6 @@ sub DESTROY
 {
     # DEFINE Destructors
     my ($self) = @_;
-    print "Database Destroyed :P";
 }
 
 1;
