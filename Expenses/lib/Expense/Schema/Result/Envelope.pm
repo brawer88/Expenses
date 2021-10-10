@@ -79,6 +79,11 @@ __PACKAGE__->table("Envelope");
   is_nullable: 1
   size: [13,2]
 
+=head2 duedate
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -96,6 +101,8 @@ __PACKAGE__->add_columns(
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
   "autofillamount",
   { data_type => "decimal", is_nullable => 1, size => [13, 2] },
+  "duedate",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -163,8 +170,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-08 09:11:40
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bU0PnXbP0M9xjh8Vq6FnOA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2021-10-09 21:08:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Yf514ZaAdjR5RmSiLhdRog
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

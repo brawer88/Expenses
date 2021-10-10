@@ -13,11 +13,11 @@
           </div>
           <div>
             <label for="fname">First Name:</label>
-            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" required>
+            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" >
           </div>
           <div>
             <label for="lname">Last Name:</label>
-            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" required>
+            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" >
           </div>
         <h1>Add a Bank</h1>
         <div class="form-group">

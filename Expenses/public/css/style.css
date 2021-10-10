@@ -28,7 +28,7 @@ html {
 
 #envelope td
 {
-  width:30%;
+  width:20%;
 }
 
 form{
@@ -42,4 +42,11 @@ button{
 
 table{
   margin: auto;
+  max-width: 375px;
+}
+
+@media only screen and (max-width: 600px) {
+  body{
+    font-size: 12px;
+  }
 }

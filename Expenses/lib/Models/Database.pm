@@ -74,7 +74,7 @@ sub GetEnvelopes
             userid => $UID,
         },
         {
-            order_by => { -asc => 'bankid' }
+            order_by => { -asc => 'duedate' }
         }
     );
 
@@ -84,6 +84,7 @@ sub GetEnvelopes
         my $name    = $row->get_column("name");
         my $goal    = $row->get_column("goalamount");
         my $bankid  = $row->get_column("bankid");
+        my $due     = $row->get_column("duedate");
 
         my $rs2 = resultset('Bank')->search(
             {
@@ -103,8 +104,8 @@ sub GetEnvelopes
                         $name
                     </div>
                     <div class="card-body text-right">
-                        <table id="envelope" class="table table-bordered"><thead><tr><th>Balance</th><th>Goal</th><th>Difference</th><th>Bank</th></tr></thead>
-                        <tbody><tr><td>$balance</td><td>$goal</td><td>$diff</td><td>$bank</td></tr></tbody></table>
+                        <table id="envelope" class="table table-bordered"><thead><tr><th>Due</th><th>Balance</th><th>Goal</th><th>Difference</th><th>Bank</th></tr></thead>
+                        <tbody><tr><td>$due</td><td>$balance</td><td>$goal</td><td>$diff</td><td>$bank</td></tr></tbody></table>
                         <a href="/envelope/$name" class="btn btn-primary">Manage</a>
                         <a href="/transaction/$name" class="btn btn-primary">Add Transaction</a>
                     </div>
@@ -504,11 +505,11 @@ sub AddBank
 
 #  sub AddEnvelope
 #  Abstract: Adds envelope to user account
-#  params: ( $UID, $name, $balance, $goal, $bank_id, $autofill )
+#  params: ( $UID, $name, $balance, $goal, $bank_id, $autofill, $due )
 #  returns: $result - the result
 sub AddEnvelope
 {
-    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill ) = @_;
+    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill, $due ) = @_;
 
     my $result = resultset('Envelope')->create(
         {
@@ -520,6 +521,15 @@ sub AddEnvelope
             bankid         => $bank_id
         }
     );
+
+    if ( $due ne "none" )
+    {
+        $result->update(
+            {
+                duedate => $due
+            }
+        );
+    }
 
     my $env_id = $result->get_column("envelopeid");
 
@@ -706,7 +716,7 @@ sub CreateAccount
 {
     my ( $self, $username, $password, $fname, $lname ) = @_;
 
-    my $password_hash = passphrase($password )->generate;
+    my $password_hash = passphrase($password)->generate;
 
     my $rs = resultset("User")->create(
         {

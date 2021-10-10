@@ -141,9 +141,10 @@ post '/addenvelope' => sub
     my $goal     = body_parameters->get('goal');
     my $bank_id  = body_parameters->get('banks');
     my $autofill = body_parameters->get('autofill');
+    my $due      = body_parameters->get('due');
 
     my $result =
-      $db->AddEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill );
+      $db->AddEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill, $due );
 
     if ($result)
     {
