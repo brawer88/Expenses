@@ -613,7 +613,7 @@ sub GetTransactions
     );
 
     $html .= qq~<div class="container">
-                    <table id="trans" class="table table-bordered"><thead><tr><th>Envelope</th><th>Type</th><th>Date</th><th>Amount</th><th>Reason</th></tr></thead><tbody>
+                    <table id="trans" style="fant-size:9px" class="table table-bordered"><thead><tr><th>Envelope</th><th>Date</th><th>Amount</th><th>Reason</th></tr></thead><tbody>
             ~;
     while ( my $row = $rs->next )
     {
@@ -634,7 +634,7 @@ sub GetTransactions
 
             my $env_name = $env_rs->get_column("name");
             $html .= qq~
-                    <tr><td>$env_name</td><td>$type</td><td>$date</td><td>$amount</td><td>$reason</td></tr>
+                    <tr><td>$env_name</td><td>$date</td><td>$amount\n$type</td><td>$reason</td></tr>
                  ~;
         }
         else
@@ -648,7 +648,7 @@ sub GetTransactions
             my $bank_name = $bank_rs->get_column("name");
 
             $html .= qq~
-                    <tr><td>$bank_name</td><td>$type</td><td>$date</td><td>$amount</td><td>$reason</td></tr>
+                    <tr><td>$bank_name</td><td>$date</td><td>$amount\n$type</td><td>$reason</td></tr>
                  ~;
 
         }
