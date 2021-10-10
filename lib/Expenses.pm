@@ -18,31 +18,31 @@ my @times;
 my $start_time;
 my $finish_time;
 
-hook before => sub
-{
-    $start_time = time();
-};
+# hook before => sub
+# {
+#     $start_time = time();
+# };
 
-hook after => sub
-{
-    $finish_time = time();
+# hook after => sub
+# {
+#     $finish_time = time();
 
-    my $delta = ( $finish_time - $start_time );
+#     my $delta = ( $finish_time - $start_time );
 
-    print "\n\nDelta this run is: $delta seconds\n\n";
-    push @times, $delta;
+#     print "\n\nDelta this run is: $delta seconds\n\n";
+#     push @times, $delta;
 
-    if ( scalar @times > 1 )
-    {
-        my $total;
-        my $count = scalar @times;
-        grep { $total += $_ } @times;
+#     if ( scalar @times > 1 )
+#     {
+#         my $total;
+#         my $count = scalar @times;
+#         grep { $total += $_ } @times;
 
-        my $average = ( $total / $count );
+#         my $average = ( $total / $count );
 
-        print "\n\nAverage of $count is $average seconds\n\n";
-    }
-};
+#         print "\n\nAverage of $count is $average seconds\n\n";
+#     }
+# };
 
 any qr{.*} => sub
 {
