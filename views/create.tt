@@ -1,6 +1,6 @@
 <div id="page">
   <div id="content">
-    <h1>Create Account in below</h1>
+    <h1>Create Account</h1>
     <form action="<% request.uri_base %>/user/create"  method="post">
         <div class="form-group">
           <div>
