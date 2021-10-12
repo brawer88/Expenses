@@ -106,8 +106,8 @@ sub GetEnvelopes
                     <div class="card-body text-right">
                         <table id="envelope" class="table table-bordered"><thead><tr><th>Due</th><th>Balance</th><th>Goal</th><th>Bank</th></tr></thead>
                         <tbody><tr><td>$due</td><td>$balance</td><td>$goal</td><td>$bank</td></tr></tbody></table>
-                        <a href="/envelope/$name" class="btn btn-primary">Manage</a>
-                        <a href="/transaction/$name" class="btn btn-primary">Add Transaction</a>
+                        <a href="/envelope/$name" class="btn btn-primary"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                        <a href="/transaction/$name" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
                     </div>
                 </div>        
         ~;
