@@ -1,0 +1,4 @@
+*.conf
+*.yml
+./config.yml
+./config/db/schema.conf
