@@ -9,6 +9,18 @@ self.addEventListener('fetch', (event) => {
     const cacheFirst = new workbox.strategies.CacheFirst();
     event.respondWith(cacheFirst.handle({request: event.request}));
   }
+
+  if (event.request.url.endsWith('.css')) {
+    // Referencing workbox.strategies will now work as expected.
+    const cacheFirst = new workbox.strategies.CacheFirst();
+    event.respondWith(cacheFirst.handle({request: event.request}));
+  }
+
+  if (event.request.url.endsWith('.png')) {
+    // Referencing workbox.strategies will now work as expected.
+    const cacheFirst = new workbox.strategies.CacheFirst();
+    event.respondWith(cacheFirst.handle({request: event.request}));
+  }
 });
 
 // Initialize deferredPrompt for use later to show browser install prompt.
