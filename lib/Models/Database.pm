@@ -128,6 +128,9 @@ sub GetEnvelopesSelect
     my $rs = resultset('Envelope')->search(
         {
             userid => $UID
+        },
+        {
+            order_by => { -asc => 'duedate' }
         }
     );
 
@@ -163,6 +166,9 @@ sub GetAutofillCheckboxes
     my $rs = resultset('Envelope')->search(
         {
             userid => $UID
+        },
+        {
+            order_by => { -asc => 'duedate' }
         }
     );
 
@@ -203,6 +209,9 @@ sub GetBanks
     my $rs = resultset('Bank')->search(
         {
             userid => $UID
+        },
+        {
+            order_by => { -asc => 'bankid' }
         }
     );
 
