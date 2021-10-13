@@ -21,7 +21,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
   // Update UI notify the user they can install the PWA
-  var shown = Cookies.get('install_shown');
+  var shown = $.cookie('install_shown');
   if (! shown )
   {
      InstallMe(); 
@@ -42,6 +42,6 @@ if ('serviceWorker' in navigator) {
 
 function InstallMe()
 {
-    Cookies.set('install_shown', 'true');
+    $.cookie('install_shown', 'true',{ expires: 750 });
     $('#install_me').modal({show: true});
 }
