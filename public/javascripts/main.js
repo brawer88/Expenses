@@ -22,7 +22,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredPrompt = e;
   // Update UI notify the user they can install the PWA
   var shown = getCookie('install_shown');
-  if (! shown )
+  if ( shown === undefined )
   {
      InstallMe(); 
   }
