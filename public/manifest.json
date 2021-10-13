@@ -468,9 +468,9 @@
       "description": "Add Paycheck",
       "url": "/user/addpaycheck",
       "icons": [
-        {          
-          "src": "ios/16.png",
-          "sizes": "16x16"
+        {
+        "src": "ios/192.png",
+        "sizes": "192x192"
         }
       ]
     }
