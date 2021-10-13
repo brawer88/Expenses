@@ -180,7 +180,7 @@ sub GetAutofillCheckboxes
         my $autofill = $row->get_column("goalamount");
         my $id       = $row->get_column("envelopeid");
 
-        if ($autofill > 0)
+        if ( $autofill > 0 )
         {
             $html .= qq~<div class="form-check">
                 <input class="form-check-input" type="checkbox" value="$id" id="$name+$id" name="autofill">
@@ -190,7 +190,6 @@ sub GetAutofillCheckboxes
             </div>
              ~;
         }
-
 
     }
 
@@ -733,6 +732,19 @@ sub CreateAccount
 
     my $password_hash = passphrase($password)->generate;
 
+    my $result = 0;
+
+    my $check_rs = resultset("User")->single(
+        {
+            username => $username
+        }
+    );
+
+    if ($check_rs)
+    {
+        return $result;
+    }
+
     my $rs = resultset("User")->create(
         {
             username  => $username,
@@ -744,7 +756,6 @@ sub CreateAccount
 
     my $user = Login( $self, $username, $password );
 
-    my $uid = $user->UID;
     return $user;
 }
 

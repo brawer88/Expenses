@@ -5,29 +5,29 @@
         <div class="form-group">
           <div>
             <label for="user">Username:</label>
-            <input class="form-control" id="user" name="user" type="text" >
+            <input class="form-control" id="user" name="user" type="text" required value="<% user %>">
           </div>
           <div>
             <label for="password">Password:</label>
-            <input class="form-control" id="password" name="password" type="password"  >
+            <input class="form-control" id="password" name="password" type="password" required value="<% password %>">
           </div>
           <div>
             <label for="fname">First Name:</label>
-            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" >
+            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" value="<% fname %>">
           </div>
           <div>
             <label for="lname">Last Name:</label>
-            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" >
+            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" value="<% lname %>">
           </div>
         <h1>Add a Bank</h1>
         <div class="form-group">
             <div>
                 <label for="name">Name</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required value="<% name %>">
             </div>
             <div>
                 <label for="balance">Starting Balance</label>
-                <input type="number" class="form-control" name="balance" id="balance" placeholder="Starting Balance" step="0.01" required>
+                <input type="number" class="form-control" name="balance" id="balance" placeholder="Starting Balance" step="0.01" required value="<% balance %>">
             </div>
         </div>
           <button type="submit" class="btn btn-primary">Submit</button>

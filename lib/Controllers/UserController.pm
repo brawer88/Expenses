@@ -144,7 +144,8 @@ post '/addenvelope' => sub
     my $due      = body_parameters->get('due');
 
     my $result =
-      $db->AddEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill, $due );
+      $db->AddEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill,
+        $due );
 
     if ($result)
     {
@@ -273,31 +274,46 @@ get '/create' => sub
 #------------------------------------------
 post '/create' => sub
 {
-    my $username = body_parameters->get('user');
-    my $password = body_parameters->get('password');
-    my $fname    = body_parameters->get('fname');
-    my $lname    = body_parameters->get('lname');
+    my $username  = body_parameters->get('user');
+    my $password  = body_parameters->get('password');
+    my $fname     = body_parameters->get('fname');
+    my $lname     = body_parameters->get('lname');
+    my $bank_name = body_parameters->get('name');
+    my $balance   = body_parameters->get('balance');
 
     my $user = $db->CreateAccount( $username, $password, $fname, $lname );
-    
-    
-    session user => $user if ($user->logged_in);
 
-    my $name    = body_parameters->get('name');
-    my $balance = body_parameters->get('balance');
-
-    my $result = $db->AddBank( $user->UID, $name, $balance );
-
-    if ($result)
+    if ( $user != 0 )
     {
-        set_flash("Account created successfully. Please add your first envelope:");
-        return redirect uri_for('/user/addenvelope');
+        session user => $user if ( $user->logged_in );
+
+        my $result = $db->AddBank( $user->UID, $bank_name, $balance );
+
+        if ($result)
+        {
+            set_flash("Account created successfully. Please add your first envelope:");
+            return redirect uri_for('/user/addenvelope');
+        }
+        else
+        {
+            set_flash("Account creation failed. Please try again.");
+            return redirect uri_for('/user/create');
+        }
     }
-    else
-    {
-        set_flash("Account creation failed.");
-        return redirect uri_for('/user/create');
-    }
+
+    template 'create' => {
+        'title'     => 'Expenses: Create Account',
+        'pageTitle' => 'Create Account',
+        'msg'       => 'Username already exists',
+        'logged_in' => 0,
+        'user'      => $username,
+        'password'  => $password,
+        'fname'     => $fname,
+        'lname'     => $lname,
+        'name'      => $bank_name,
+        'balance'   => $balance,
+    };
+
 };
 
 #------------------------------------------
