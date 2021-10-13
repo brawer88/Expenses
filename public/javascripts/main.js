@@ -14,7 +14,6 @@ function getBanks(){
 
 // Initialize deferredPrompt for use later to show browser install prompt.
 let deferredPrompt;
-let installButton = document.createElement('button');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent the mini-infobar from appearing on mobile
@@ -22,27 +21,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
   // Update UI notify the user they can install the PWA
-  deferredPrompt.prompt();
+  InstallMe();
   // Optionally, send analytics event that PWA install promo was shown.
   console.log(`'beforeinstallprompt' event was fired.`);
 });
-
-installButton.addEventListener('click', function(){
-    deferredPrompt.prompt();
- });
-
-let installed = false;
-installButton.addEventListener('click', async function(){
-    deferredPrompt.prompt();
-  let result = await that.prompt.userChoice;
-  if (result&&result.outcome === 'accepted') {
-     installed = true;
-  }
-});
-
-window.addEventListener('appinstalled', async function(e) {
-    installButton.style.display = "none";
- });
 
 // Check that service workers are supported
 if ('serviceWorker' in navigator) {
@@ -53,3 +35,7 @@ if ('serviceWorker' in navigator) {
 }
 
 
+function InstallMe()
+{
+    $('#install_me').modal({show: true});
+}
