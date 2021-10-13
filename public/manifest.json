@@ -466,7 +466,13 @@
       "name": "Add Paycheck",
       "short_name": "Paycheck",
       "description": "Add Paycheck",
-      "url": "/user/addpaycheck"
+      "url": "/user/addpaycheck",
+      "icons": [
+        {          
+          "src": "ios/16.png",
+          "sizes": "16x16"
+        }
+      ]
     }
   ]
   }
