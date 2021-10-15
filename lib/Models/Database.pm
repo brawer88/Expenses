@@ -692,7 +692,7 @@ sub AddPaycheck
     $bank_rs->update(
         {
             unallocated => $new_unallocated,
-            balance     => $balance
+            balance     => $balance + $amount
         }
     );
 
