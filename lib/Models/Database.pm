@@ -137,7 +137,7 @@ sub GetEnvelopes
                     </div>
                     <div class="card-body text-right">
                         <table id="envelope" class="table table-bordered"><thead><tr><th>Due</th><th>Balance</th><th>Goal</th><th>Bank</th></tr></thead>
-                        <tbody><tr><td>$due</td><td>$balance</td><td>$goal</td><td>$bank</td></tr></tbody></table>
+                        <tbody><tr><td data-label="due">$due</td><td data-label="balance">$balance</td><td data-label="goal">$goal</td><td data-label="bank">$bank</td></tr></tbody></table>
                         <a href="/envelope/$name" class="btn btn-primary"><i class="fa fa-cog" aria-hidden="true"></i></a>
                         <a href="/transaction/$name" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
                     </div>
@@ -250,7 +250,7 @@ sub GetBanks
                 <div class="jumbotron jumbotron-fluid">
                     <div class="container">
                         <h1 class="display-4">Banks</h1>
-                            <table id="envelope" class="table table-bordered"><thead><tr><th>Name</th><th>Balance</th><th>Unallocated</th></tr></thead><tbody>
+                            <table id="envelope" class="table"><thead><tr><th>Name</th><th>Balance</th><th>Unallocated</th></tr></thead><tbody>
             ~;
     while ( my $row = $rs->next )
     {
@@ -259,7 +259,7 @@ sub GetBanks
         my $name    = $row->get_column("name");
 
         $html .= qq~
-                    <tr><td>$name</td><td>$balance</td><td>$unall</td></tr>
+                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Unallocated">$unall</td></tr>
                  ~;
     }
 
