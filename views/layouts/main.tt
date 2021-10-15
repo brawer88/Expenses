@@ -5,9 +5,9 @@
   <meta charset="<% settings.charset %>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title><% title %></title>
-  <link rel="stylesheet" href="<% request.uri_base %>/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="<% request.uri_base %>/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="<% request.uri_base %>/css/style.css">
   <link rel="manifest" href="<% request.uri_base %>/manifest.json">
   <script type="text/javascript" src="<% request.uri_base %>/javascripts/jquery.js"></script>  
   <script src="<% request.uri_base %>/javascripts/bootstrap.min.js"></script>
