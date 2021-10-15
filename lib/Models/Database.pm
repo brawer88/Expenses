@@ -921,9 +921,17 @@ sub UpdateEnvelope
             goalamount     => $goal,
             bankid         => $bank_id,
             autofillamount => $autofill,
-            duedate        => $due
         }
     );
+
+    if ( $due ne "none" )
+    {
+        $rs->update(
+            {
+                duedate => $due
+            }
+        );
+    }
 
     $result = 1;
 

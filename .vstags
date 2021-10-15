@@ -14,7 +14,7 @@ Controllers::MainController	lib/Controllers/MainController.pm	1;"	p
 Controllers::TransactionController	lib/Controllers/TransactionController.pm	1;"	p
 Controllers::UserController	lib/Controllers/UserController.pm	1;"	p
 CreateAccount	lib/Models/Database.pm	807;"	s
-DESTROY	lib/Models/Database.pm	936;"	s
+DESTROY	lib/Models/Database.pm	944;"	s
 DESTROY	lib/Models/Envelope.pm	127;"	s
 DESTROY	lib/Models/User.pm	98;"	s
 Expense::Schema	lib/Expense/Schema.pm	2;"	p
@@ -42,7 +42,7 @@ Models::Database::AddExpense	lib/Models/Database.pm	355;"	s
 Models::Database::AddIncome	lib/Models/Database.pm	447;"	s
 Models::Database::AddPaycheck	lib/Models/Database.pm	751;"	s
 Models::Database::CreateAccount	lib/Models/Database.pm	807;"	s
-Models::Database::DESTROY	lib/Models/Database.pm	936;"	s
+Models::Database::DESTROY	lib/Models/Database.pm	944;"	s
 Models::Database::FillEnvelope	lib/Models/Database.pm	632;"	s
 Models::Database::GetAutofillCheckboxes	lib/Models/Database.pm	193;"	s
 Models::Database::GetBanks	lib/Models/Database.pm	235;"	s
