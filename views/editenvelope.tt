@@ -1,0 +1,47 @@
+<div id="page">
+  <div id="content">
+    <% IF logged_in %>
+        <% IF owns %>
+            <h1>Edit Envelope <% name %></h1>
+            <form method="post" action="<% request.uri_base %>/user/editenvelope">
+                <div class="form-group">
+                    <div>
+                        <label for="amount">Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="My Envelope" required value="<% name %>">
+                    </div>
+                    <div>
+                        <label for="banks">Select the Bank this belongs to:</label>
+                        <% banks %>
+                    </div>
+                    <div>
+                        <label for="balance">Current Balance</label>
+                        <input type="number" class="form-control" name="balance" id="balance" placeholder="Balance" step="0.01" required value="<% balance %>">
+                    </div>
+                    <div>
+                        <label for="goal">Goal Amount</label>
+                        <input type="number" class="form-control" name="goal" id="goal" placeholder="Goal" step="0.01" required value="<% goal %>">
+                    </div>
+                    <div>
+                        <label for="autofill">Autofill Amount</label>
+                        <input type="number" class="form-control" name="autofill" id="autofill" placeholder="Autofill" step="0.01" required value="<% autofill %>">
+                    </div>
+                    <div>
+                        <label for="due">Typical Due Date</label>
+                        <select class="form-control" name="due" id="due">
+                            <% date %>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        <% ELSE %>
+            <div class="warning">
+                <i class="fa fa-warning"></i>
+                <p>This envelope doesn't exist or is not yours to mess with.</p>
+            </div>
+        <% END %>
+    <% ELSE %>
+      <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to add a bank.</p>
+    <% END %>
+  </div>
+</div>
