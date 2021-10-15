@@ -200,7 +200,7 @@ sub GetAutofillCheckboxes
             userid => $UID
         },
         {
-            order_by => { -asc => 'duedate' }
+            order_by => { -asc => 'duedate, name' }
         }
     );
 
