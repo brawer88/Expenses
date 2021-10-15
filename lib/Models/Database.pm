@@ -4,6 +4,7 @@ use warnings;
 
 use Models::Utilities;
 use Models::User;
+use Models::Envelope;
 use Dancer2 appname => 'Expenses';
 use Dancer2::Plugin::Passphrase;
 use Dancer2::Plugin::DBIC;
@@ -58,6 +59,38 @@ sub Login
         $user->logged_in(FALSE);
     }
     return $user;
+}
+
+#  GetEnvelope
+#  Abstract: Gets envelope by name and user id
+#  params: ( $UID, $name )
+#  returns: $envelope - the model rep of this envelope
+sub GetEnvelope
+{
+    my ( $self, $UID, $name ) = @_;
+    my $envelope = Models::Envelope->new();
+
+    
+    my $rs = resultset('Envelope')->single(
+        {
+            userid => $UID,
+            name => $name
+        }
+    );
+
+    if (!$rs)
+    {
+        return $envelope;
+    }
+
+    $envelope->name($rs->name);
+    $envelope->balance($rs->balance);
+    $envelope->goalamount($rs->goalamount);
+    $envelope->autofillamount($rs->autofillamount);
+    $envelope->duedate($rs->duedate);
+    $envelope->bankid($rs->get_column("bankid"));
+
+    return $envelope;
 }
 
 #  GetEnvelopes
@@ -236,10 +269,10 @@ sub GetBanks
     return $html;
 }
 
-#  GetBanks
-#  Abstract: Gets Banks
+#  GetBanksSelect
+#  Abstract: Gets Banks as select
 #  params: ( $UID )
-#  returns: $html - the html rep of all envelopes belonging to the user
+#  returns: $html - the html rep of all banks belonging to the user
 sub GetBanksSelect
 {
     my ( $self, $UID ) = @_;
@@ -265,6 +298,48 @@ sub GetBanksSelect
 
             $html .= qq~
                         <option value="$id">$name| Unallocated: $unall</option>
+                    ~;
+        }
+
+        $html .= qq~</select>~;
+    }
+
+    return $html;
+}
+
+#  GetBanksSelected
+#  Abstract: Gets Banks
+#  params: ( $UID, $bank_id )
+#  returns: $html - the html rep of all banks belonging to the user, with an option selected
+sub GetBanksSelected
+{
+    my ( $self, $UID, $bank_id ) = @_;
+    my $html;
+
+    my $rs = resultset('Bank')->search(
+        {
+            userid => $UID
+        }
+    );
+
+    if ($rs)
+    {
+        $html .= qq~
+                <select class="form-control" name="banks" id="banks">
+        ~;
+
+        while ( my $row = $rs->next )
+        {
+            my $unall = $row->get_column("unallocated");
+            my $name  = $row->get_column("name");
+            my $id    = $row->get_column("bankid");
+
+            my $selected;
+
+            $selected = "selected" if $id == $bank_id;
+
+            $html .= qq~
+                        <option $selected value="$id">$name| Unallocated: $unall</option>
                     ~;
         }
 
@@ -757,6 +832,25 @@ sub CreateAccount
     my $user = Login( $self, $username, $password );
 
     return $user;
+}
+
+#  UserOwns
+#  Abstract: Returns boolean for if the user owns an envelope with this name
+#  params: ( $UID, $name )
+#  returns: $owns
+sub UserOwns
+{
+    my ( $self, $UID, $name ) = @_;
+    my $owns = FALSE;
+
+    my $rs = resultset('Envelope')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    $owns = TRUE if $rs;
 }
 
 #------------------------------------------

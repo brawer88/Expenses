@@ -11,6 +11,7 @@ my $db = Models::Database->new();
 use Controllers::UserController;
 use Controllers::MainController;
 use Controllers::TransactionController;
+use Controllers::EnvelopeController;
 
 our $VERSION = '0.1';
 

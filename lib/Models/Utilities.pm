@@ -17,6 +17,7 @@ our @EXPORT = qw(
   printHash
   getDiff
   getLinkInfo
+  getDateSelected
 );
 use constant {
     TRUE              => 1,
@@ -315,6 +316,29 @@ sub getLinkInfo
     );
 
     return \%link_info;
+}
+
+#  getDateSelected
+#  Abstract: Gets selects with an option selected
+#  params: ( $date )
+#  returns: $html - the select with option selected
+sub getDateSelected
+{
+    my ( $date ) = @_;
+
+    my $html = qq~<option value="none">None</option>~;
+
+    foreach my $day (1..31)
+    {
+        my $selected;
+
+        $selected = "selected" if $day == $date;
+        $html .= qq~
+        <option $selected value="$day">$day</option>~;
+    }
+
+
+    return $html;
 }
 
 1;
