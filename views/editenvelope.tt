@@ -3,7 +3,8 @@
     <% IF logged_in %>
         <% IF owns %>
             <h1>Edit Envelope <% name %></h1>
-            <form method="post" action="<% request.uri_base %>/user/editenvelope">
+            <p><small>*Note - changing the bank this is attached to will only free the current balance into the original bank unallocated. You must fill the envelope from the new bank after this operation.</small></p>
+            <form method="post" action="<% request.uri_base %>/envelope/<% name %>">
                 <div class="form-group">
                     <div>
                         <label for="amount">Name</label>

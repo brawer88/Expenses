@@ -70,25 +70,24 @@ sub GetEnvelope
     my ( $self, $UID, $name ) = @_;
     my $envelope = Models::Envelope->new();
 
-    
     my $rs = resultset('Envelope')->single(
         {
             userid => $UID,
-            name => $name
+            name   => $name
         }
     );
 
-    if (!$rs)
+    if ( !$rs )
     {
         return $envelope;
     }
 
-    $envelope->name($rs->name);
-    $envelope->balance($rs->balance);
-    $envelope->goalamount($rs->goalamount);
-    $envelope->autofillamount($rs->autofillamount);
-    $envelope->duedate($rs->duedate);
-    $envelope->bankid($rs->get_column("bankid"));
+    $envelope->name( $rs->name );
+    $envelope->balance( $rs->balance );
+    $envelope->goalamount( $rs->goalamount );
+    $envelope->autofillamount( $rs->autofillamount );
+    $envelope->duedate( $rs->duedate );
+    $envelope->bankid( $rs->get_column("bankid") );
 
     return $envelope;
 }
@@ -210,7 +209,7 @@ sub GetAutofillCheckboxes
         my $balance  = $row->get_column("balance");
         my $name     = $row->get_column("name");
         my $goal     = $row->get_column("goalamount");
-        my $autofill = $row->get_column("goalamount");
+        my $autofill = $row->get_column("autofillamount");
         my $id       = $row->get_column("envelopeid");
 
         if ( $autofill > 0 )
@@ -801,6 +800,10 @@ sub AddPaycheck
     return $transaction_rs;
 }
 
+#  CreateAccount
+#  Abstract: Creates account and logs in user
+#  params: ( $username, $password, $fname, $lname )
+#  returns: $user
 sub CreateAccount
 {
     my ( $self, $username, $password, $fname, $lname ) = @_;
@@ -851,6 +854,80 @@ sub UserOwns
     );
 
     $owns = TRUE if $rs;
+
+    return $owns;
+}
+
+#  UpdateEnvelope
+#  Abstract: Updates a user envelope
+#  params: ( $UID, $name, $balance, $goal, $bank_id, $autofill, $due )
+#  returns: $user
+sub UpdateEnvelope
+{
+    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill, $due ) = @_;
+
+    my $result = 0;
+
+    my $rs = resultset('Envelope')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    my $current_bank             = $rs->get_column("bankid");
+    my $current_envelope_balance = $rs->get_column("balance");
+
+    my $difference = $current_envelope_balance - $balance;
+
+    my $new_balance = $balance;
+    my $new_bank_unallocated;
+
+    my $bank_rs = resultset("Bank")->single(
+        {
+            bankid => $current_bank
+        }
+    );
+
+    my $current_bank_unallocated = $bank_rs->get_column("unallocated");
+
+    if ( $current_bank != $bank_id )
+    {
+        #free all money tied to this envelope
+        $new_bank_unallocated = $current_bank_unallocated + $current_envelope_balance;
+        $bank_rs->update(
+            {
+                unallocated => $new_bank_unallocated
+            }
+        );
+
+        $new_balance = 0;
+    }
+    if ( $current_envelope_balance != $balance )
+    {
+        # free difference into unallocated or out of unallocated
+        $new_bank_unallocated = $current_bank_unallocated + $difference;
+        $bank_rs->update(
+            {
+                unallocated => $new_bank_unallocated
+            }
+        );
+    }
+
+    $rs->update(
+        {
+            name           => $name,
+            balance        => $new_balance,
+            goalamount     => $goal,
+            bankid         => $bank_id,
+            autofillamount => $autofill,
+            duedate        => $due
+        }
+    );
+
+    $result = 1;
+
+    return $result;
 }
 
 #------------------------------------------

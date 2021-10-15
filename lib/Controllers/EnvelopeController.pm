@@ -39,24 +39,46 @@ get '/:envelope' => sub
 #------------------------------------------
 post '/:envelope' => sub
 {
-    my $name = param('envelope');
+    my $edit_name = param('envelope');
     my $user = session('user') // Models::User->new();
+        
+    my $name     = body_parameters->get('name');
+    my $balance  = body_parameters->get('balance');
+    my $goal     = body_parameters->get('goal');
+    my $bank_id  = body_parameters->get('banks');
+    my $autofill = body_parameters->get('autofill');
+    my $due      = body_parameters->get('due');
 
-    my $type        = body_parameters->get('ExpenseType');
-    my $transfer_to = body_parameters->get('transfer_to');
-    my $amount      = body_parameters->get('amount');
-    my $for         = body_parameters->get('for');
-    my $to_name     = $db->GetEnvelopeName($transfer_to);
+    my $due_html   = getDateSelected( $due );
+    my $banks = $db->GetBanksSelected( $user->UID, $bank_id );
+    my $owns  = $db->UserOwns( $user->UID, $edit_name );
 
-    $db->AddExpense( $user->UID, $name, $amount, $for, $type, $transfer_to );
+    my $result;
 
-    if ( $type eq "Transfer" )
+    if ($owns)
     {
-        $for = qq~Transfer from $name to $to_name.~;
-        $db->AddIncome( $user->UID, $transfer_to, $amount, $for, $type, $name );
+        $result = $db->UpdateEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill,
+        $due );
     }
 
-    return redirect uri_for('/');
+    if ($result)
+    {
+        return redirect uri_for("/");
+    }
+
+    template 'editenvelope' => {
+        'title'     => 'Expenses: Add Transaction',
+        'logged_in' => $user->logged_in // 0,
+        'name'      => $name,
+        'banks'     => $banks,
+        'balance'   => $balance,
+        'goal'      => $goal,
+        'autofill'  => $autofill,
+        'owns'      => $owns,
+        'date'      => $due_html,
+        'msg'       => "Updating envelope failed."
+    };
+    
 };
 
 prefix '/';
