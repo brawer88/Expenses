@@ -13,7 +13,7 @@
                 <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" step="0.01" required>
             </div>
             <div>
-                <label for="autofill">Autofill?</label>
+                <label for="autofill">Autofill Total: <span id="total">0</span></label>
                 <% autofill %>
             </div>
         </div>
@@ -24,3 +24,28 @@
     <% END %>
   </div>
 </div>
+
+<script>
+  $('input:checkbox').change(
+    function(){
+       var total = 0;
+       $('input[type=checkbox]').each(function () {
+          var item = $(this);
+          if( item.is(":checked"))
+          {
+            var id = item.attr("id");
+            var amount = $('label[for="' + id + '"]').html();
+
+            let myRegexp = new RegExp("(Autofill: )([0-9]*.[0-9]{2})", "gm");
+            var match = myRegexp.exec(amount);
+
+            amount = match[2] * 1;
+
+            total = eval(amount + total);
+          }
+
+       });
+
+       $("#total").text(total);
+    });
+</script>
