@@ -217,7 +217,7 @@ sub GetAutofillCheckboxes
             $html .= qq~<div class="form-check">
                 <input class="form-check-input" type="checkbox" value="$id" id="$name+$id" name="autofill">
                 <label class="form-check-label" for="$name+$id">
-                    $name | Balance: $balance | Goal: $goal | Autofill: $autofill
+                    <table><tr><td>$name</td><td>Balance: $balance</td><td>Goal: $goal</td><td>Autofill: $autofill</td></tr></table>
                 </label>
             </div>
              ~;
