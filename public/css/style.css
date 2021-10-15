@@ -84,7 +84,7 @@ height: 60px;
 
 			
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 370px) {
 	table{
 		border: 1px solid transparent;
     box-shadow: none;
