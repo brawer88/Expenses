@@ -2,7 +2,7 @@
   <div id="content">
     <% IF logged_in %>
     <h1>Fill Envelope</h1>
-      <form method="post" action="<% request.uri_base %>/user/fillenvelope">
+      <form method="post" action="<% request.uri_base %>/envelope/fillenvelope">
         <div class="form-group">
             <div>
                 <label for="banks">Select the Bank to pull from:</label>

@@ -208,51 +208,7 @@ post '/addpaycheck' => sub
     }
 };
 
-#------------------------------------------
-#   Get method for adding a bank
-#------------------------------------------
-get '/fillenvelope' => sub
-{
-    my $user = session('user') // Models::User->new();
 
-    my $banks     = $db->GetBanksSelect( $user->UID );
-    my $envelopes = $db->GetEnvelopesSelect( $user->UID );
-
-    template 'fillenvelope' => {
-        'title'     => 'Expenses: Fill Envelope',
-        'pageTitle' => 'Fill Envelope',
-        'banks'     => $banks,
-        'envelopes' => $envelopes,
-        'msg'       => Models::Utilities::get_flash(),
-        'logged_in' => $user->logged_in // 0,
-    };
-};
-
-#------------------------------------------
-#   Post method for adding a paycheck
-#------------------------------------------
-post '/fillenvelope' => sub
-{
-    my $user = session('user') // Models::User->new();
-
-    my $bank_id     = body_parameters->get('banks');
-    my $transfer_to = body_parameters->get('transfer_to');
-    my $amount      = body_parameters->get('amount');
-
-    my $result = $db->FillEnvelope( $user->UID, $transfer_to, $bank_id, $amount );
-    my $name   = $db->GetEnvelopeName($transfer_to);
-
-    if ($result)
-    {
-        set_flash("Filled envelope $name successfully.");
-        return redirect uri_for('/');
-    }
-    else
-    {
-        set_flash("Filling envelope failed.");
-        return redirect uri_for('/user/fillenvelope');
-    }
-};
 
 #------------------------------------------
 #   Get method for adding a bank
