@@ -1,33 +1,37 @@
 <div id="page">
   <div id="content">
     <% IF logged_in %>
-    <h1><small class="text-muted">Add Transaction for <% name %></small></h1>
-    <h2><small class="text-muted">Available balance: <% balance %></small></h2>
-      <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
-        <div class="form-group">
-            <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="Expense" value="Expense" name="ExpenseType" class="custom-control-input" checked>
-                <label class="custom-control-label"  for="Expense">Expense</label>
+      <% IF owns %>
+        <h1><small class="text-muted">Add Transaction for <% name %></small></h1>
+        <h2><small class="text-muted">Available balance: <% balance %></small></h2>
+          <form method="post" action="<% request.uri_base %>/transaction/<% name %>">
+            <div class="form-group">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="Expense" value="Expense" name="ExpenseType" class="custom-control-input" checked>
+                    <label class="custom-control-label"  for="Expense">Expense</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="Transfer" value="Transfer" name="ExpenseType" class="custom-control-input">
+                    <label class="custom-control-label"  for="Transfer">Transfer</label>
+                </div>
+                <div id="envelope_select" >
+                    <label for="transfer_to">Select the envelope to transfer to:</label>
+                    <% available_envelopes %>
+                </div>
+                <div>
+                    <label for="amount">Amount</label>
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" step="0.01" required>
+                </div>
+                <div id="for_div">
+                    <label for="for">For:</label>
+                    <textarea class="form-control" id="for" name="for" rows="3"></textarea>
+                </div>
             </div>
-            <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="Transfer" value="Transfer" name="ExpenseType" class="custom-control-input">
-                <label class="custom-control-label"  for="Transfer">Transfer</label>
-            </div>
-            <div id="envelope_select" >
-                <label for="transfer_to">Select the envelope to transfer to:</label>
-                <% available_envelopes %>
-            </div>
-            <div>
-                <label for="amount">Amount</label>
-                <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" step="0.01" required>
-            </div>
-            <div id="for_div">
-                <label for="for">For:</label>
-                <textarea class="form-control" id="for" name="for" rows="3"></textarea>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        <% ELSE %>
+          <p>This just ain't right - attempting to change an envelope that doesn't belong to you. Tsk.</p>
+        <% END %>
     <% ELSE %>
       <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to affect your envelopes</p>
     <% END %>

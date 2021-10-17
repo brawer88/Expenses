@@ -26,10 +26,29 @@ get '/view' => sub
 #------------------------------------------
 #   Get method for transaction page
 #------------------------------------------
+get '/edit' => sub
+{
+    my $id   = query_parameters->get('t');
+    my $user = session('user') // Models::User->new();
+
+    my $trans = $db->getTransaction( $user->UID, $id );
+
+    template 'transaction' => {
+        'title'     => 'Expenses: Add Transaction',
+        'logged_in' => $user->logged_in // 0,
+        'msg'       => get_flash()
+    };
+};
+
+#------------------------------------------
+#   Get method for transaction page
+#------------------------------------------
 get '/:envelope' => sub
 {
     my $name = param('envelope');
     my $user = session('user') // Models::User->new();
+
+    my $owns = $db->UserOwns( $user->UID, $name );
 
     my $envelopes = $db->GetEnvelopesSelect( $user->UID );
     my $balance   = $db->GetEnvelopeBalance( $user->UID, $name );
@@ -40,6 +59,7 @@ get '/:envelope' => sub
         'name'                => $name,
         'available_envelopes' => $envelopes,
         'balance'             => $balance,
+        'owns'                => $owns,
         'msg'                 => get_flash()
     };
 };
@@ -58,15 +78,32 @@ post '/:envelope' => sub
     my $for         = body_parameters->get('for');
     my $to_name     = $db->GetEnvelopeName($transfer_to);
 
-    $db->AddExpense( $user->UID, $name, $amount, $for, $type, $transfer_to );
+    my $result =
+      $db->AddExpense( $user->UID, $name, $amount, $for, $type, $transfer_to );
 
-    if ( $type eq "Transfer" )
+    if ( $type eq "Transfer" && $result )
     {
         $for = qq~Transfer from $name to $to_name.~;
         $db->AddIncome( $user->UID, $transfer_to, $amount, $for, $type, $name );
     }
 
-    return redirect uri_for('/');
+    if ($result)
+    {
+        set_flash("Transaction is successful");
+        return redirect uri_for('/');
+    }
+
+    my $envelopes = $db->GetEnvelopesSelect( $user->UID );
+    my $balance   = $db->GetEnvelopeBalance( $user->UID, $name );
+
+    template 'transaction' => {
+        'title'               => 'Expenses: Add Transaction',
+        'logged_in'           => $user->logged_in // 0,
+        'name'                => $name,
+        'available_envelopes' => $envelopes,
+        'balance'             => $balance,
+        'msg'                 => "Transaction Failed"
+    };
 };
 
 prefix '/';

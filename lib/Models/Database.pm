@@ -508,6 +508,8 @@ sub AddExpense
         }
     );
 
+    return $transaction_rs;
+
 }
 
 #  AddIncome
@@ -628,6 +630,8 @@ sub GetEnvelopeBalance
 {
     my ( $self, $UID, $name ) = @_;
 
+    my $balance;
+
     my $envelope_rs = resultset('Envelope')->search(
         {
             userid => $UID,
@@ -635,7 +639,10 @@ sub GetEnvelopeBalance
         }
     )->single;
 
-    my $balance = $envelope_rs->get_column("balance");
+    if ($envelope_rs)
+    {
+        $balance = $envelope_rs->get_column("balance");
+    }
 
     return $balance;
 }
@@ -820,6 +827,7 @@ sub GetTransactions
         my $reason  = $row->get_column("reason");
         my $env_id  = $row->get_column("envelopeid");
         my $bank_id = $row->get_column("bankid");
+        my $transaction_id = $row->get_column("transactionid");
 
         if ($env_id)
         {
@@ -831,7 +839,7 @@ sub GetTransactions
 
             my $env_name = $env_rs->get_column("name");
             $html .= qq~
-                    <tr><td>$env_name</td><td>$date</td><td>$amount\n$type</td><td>$reason</td></tr>
+                    <tr><td data-label="Envelope">$env_name<br><a href="/transaction/edit?t=$transaction_id" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Date">$date</td><td data-label="Amount">$amount<br>$type</td><td data-label="Reason">$reason</td></tr>
                  ~;
         }
         else
