@@ -42,6 +42,7 @@
             amount = match[2] * 1;
 
             total = eval(amount + total);
+            total = eval(total.toFixed(2));
           }
 
        });
