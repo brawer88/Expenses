@@ -269,6 +269,46 @@ sub GetBanks
     return $html;
 }
 
+#  GetBankManagement
+#  Abstract: Gets Bank management html
+#  params: ( $UID )
+#  returns: $html - the html rep of all envelopes belonging to the user for managinig them
+sub GetBankManagement
+{
+    my ( $self, $UID ) = @_;
+    my $html;
+
+    my $rs = resultset('Bank')->search(
+        {
+            userid => $UID
+        },
+        {
+            order_by => { -asc => 'bankid' }
+        }
+    );
+
+    $html .= qq~
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1 class="display-4">Banks</h1>
+                            <table class="bankmanagement"><thead><tr><th>Name</th><th>Balance</th><th></th><th>Unallocated</th><th></th></tr></thead><tbody>
+            ~;
+    while ( my $row = $rs->next )
+    {
+        my $balance = $row->get_column("balance");
+        my $unall   = $row->get_column("unallocated");
+        my $name    = $row->get_column("name");
+
+        $html .= qq~
+                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Edit"><a href="/user/edit_bank/$name" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Unallocated">$unall</td><td data-label="Collect change into unallocated"><a href="#" onclick="reclaim('$name')" style="color: white" class="btn btn-secondary btn-sm">Make It So</a></td></tr>
+                 ~;
+    }
+
+    $html .= qq~</tbody></table></div></div>~;
+
+    return $html;
+}
+
 #  GetBanksSelect
 #  Abstract: Gets Banks as select
 #  params: ( $UID )
@@ -937,6 +977,76 @@ sub UpdateEnvelope
     $result = 1;
 
     return $result;
+}
+
+#  ReclaimChange
+#  Abstract: Adds income to envelope and connected bank
+#  params: ( $UID, $bank_name )
+#  returns: $collected - the amount freed into unallocated
+sub ReclaimChange
+{
+    my ( $self, $UID, $bank_name ) = @_;
+
+    my $bank_rs = resultset('Bank')->single(
+        {
+            name   => $bank_name,
+            userid => $UID
+        }
+    );
+
+    my $unallocated = $bank_rs->get_column("unallocated");
+    my $collected   = 0;
+    my $bank_id     = $bank_rs->get_column("bankid");
+
+    my $envelope_rs = resultset('Envelope')->search(
+        {
+            userid => $UID,
+            bankid => $bank_id
+        }
+    );
+
+    while ( my $row = $envelope_rs->next )
+    {
+
+        my $env_id = $row->get_column("envelopeid");
+
+        my $balance = $row->get_column("balance");
+
+        my $decimal = sprintf( "%.2f", ( $balance - int($balance) ) );
+
+        if ($decimal > 0)
+        {
+            $collected += $decimal;
+
+            $balance = $balance - $decimal;
+            $unallocated = $unallocated + $decimal;
+
+            $row->update({
+                balance => $balance
+            });
+
+            $bank_rs->update({
+                unallocated => $unallocated
+            });
+
+            my $time = localtime->mysql_datetime;
+
+            my $transaction_rs = resultset('Transaction')->create(
+                {
+                    envelopeid => $env_id,
+                    bankid     => $bank_id,
+                    userid     => $UID,
+                    amount     => $decimal,
+                    reason     => "Reclaimed $decimal cents into unallocated",
+                    date       => $time,
+                    type       => 'Transfer'
+                }
+            );
+        }
+
+    }
+
+    return $collected;
 }
 
 #------------------------------------------

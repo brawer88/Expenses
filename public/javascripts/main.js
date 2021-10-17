@@ -1,13 +1,11 @@
 function getEnvelopes(){
-    jQuery.get('/envelopes', function(data) {
-        console.log(data);
+    jQuery.get('/ajax/envelopes', function(data) {
         $("#env_div").html(data["text"]);
     });
 }
 
 function getBanks(){
-    jQuery.get('/banks', function(data) {
-        console.log(data);
+    jQuery.get('/ajax/banks', function(data) {
         $("#bank_div").html(data["text"]);
     });
 }

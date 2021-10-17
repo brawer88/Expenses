@@ -208,7 +208,19 @@ post '/addpaycheck' => sub
     }
 };
 
+#------------------------------------------
+#   Get method for managing bank
+#------------------------------------------
+get '/banks' => sub
+{
+    my $user = session('user') // Models::User->new();
 
+    template 'bankmanagement' => {
+        'title'     => 'Expenses: Manage Banks',
+        'pageTitle' => 'Manage Banks',
+        'logged_in' => $user->logged_in // 0,
+    };
+};
 
 #------------------------------------------
 #   Get method for adding a bank
