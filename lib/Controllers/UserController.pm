@@ -285,6 +285,55 @@ post '/create' => sub
 };
 
 #------------------------------------------
+#   Get method for adding a bank
+#------------------------------------------
+get '/editbank/:name' => sub
+{
+    my $user      = session('user') // Models::User->new();
+    my $bank_name = param("name");
+
+    my $bank = $db->GetBank( $user->UID, $bank_name );
+
+    template 'editbank' => {
+        'title'     => 'Expenses: Edit Bank',
+        'pageTitle' => 'Edit Bank',
+        'name'      => $bank->name,
+        'balance'   => $bank->balance,
+        'logged_in' => $user->logged_in // 0,
+    };
+};
+
+#------------------------------------------
+#   Post method for adding a bank
+#------------------------------------------
+post '/editbank/:name' => sub
+{
+    my $user     = session('user') // Models::User->new();
+    my $old_name = param("name");
+
+    my $new_name = body_parameters->get('name');
+    my $balance  = body_parameters->get('balance');
+
+    my $result = $db->EditBank( $user->UID, $old_name, $new_name, $balance );
+
+    if ($result)
+    {
+        set_flash("Editing Bank $old_name successfully.");
+        return redirect uri_for('/');
+    }
+    else
+    {
+        set_flash("Editing bank failed.");
+        template 'editbank' => {
+            'title'     => 'Expenses: Edit Bank',
+            'pageTitle' => 'Edit Bank',
+            'msg'       => Models::Utilities::get_flash(),
+            'logged_in' => $user->logged_in // 0,
+        };
+    }
+};
+
+#------------------------------------------
 #   Get method for user
 #------------------------------------------
 get qr{\/?} => sub

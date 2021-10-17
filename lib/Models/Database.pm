@@ -5,6 +5,7 @@ use warnings;
 use Models::Utilities;
 use Models::User;
 use Models::Envelope;
+use Models::Bank;
 use Dancer2 appname => 'Expenses';
 use Dancer2::Plugin::Passphrase;
 use Dancer2::Plugin::DBIC;
@@ -229,6 +230,34 @@ sub GetAutofillCheckboxes
     return $html;
 }
 
+#  GetBank
+#  Abstract: Gets bank object by name and user id
+#  params: ( $UID, $name )
+#  returns: $envelope - the model rep of this envelope
+sub GetBank
+{
+    my ( $self, $UID, $name ) = @_;
+    my $bank = Models::Bank->new();
+
+    my $rs = resultset('Bank')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    if ( !$rs )
+    {
+        return $bank;
+    }
+
+    $bank->name( $rs->name );
+    $bank->balance( $rs->balance );
+    $bank->bankid( $rs->get_column("bankid") );
+
+    return $bank;
+}
+
 #  GetBanks
 #  Abstract: Gets Banks
 #  params: ( $UID )
@@ -300,7 +329,7 @@ sub GetBankManagement
         my $name    = $row->get_column("name");
 
         $html .= qq~
-                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Edit"><a href="/user/edit_bank/$name" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Unallocated">$unall</td><td data-label="Collect change into unallocated"><a href="#" onclick="reclaim('$name')" style="color: white" class="btn btn-secondary btn-sm">Make It So</a></td></tr>
+                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Edit"><a href="/user/editbank/$name" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Unallocated">$unall</td><td data-label="Collect change into unallocated"><a href="#" onclick="reclaim('$name')" style="color: white" class="btn btn-secondary btn-sm">Make It So</a></td></tr>
                  ~;
     }
 
@@ -629,6 +658,46 @@ sub AddBank
     );
 
     return $result;
+}
+
+#  sub EditBank
+#  Abstract: Edits bank 
+#  params: ( $UID, $old_name, $new_name, $balance )
+#  returns: $result - the result
+sub EditBank
+{
+    my ( $self, $UID, $old_name, $new_name, $balance ) = @_;
+
+    my $bank_rs = resultset('Bank')->single(
+        {
+            userid      => $UID,
+            name        => $old_name
+        }
+    );
+
+    my $current_balance = $bank_rs->get_column("balance");
+    my $current_name = $bank_rs->get_column("name");
+    my $current_unallocated = $bank_rs->get_column("unallocated");
+
+    if($new_name ne $current_name)
+    {
+        $bank_rs->update({
+            name => $new_name
+        });
+    };
+
+    if($current_balance != $balance)
+    {
+        my $difference = $balance - $current_balance;
+        my $new_unallocated = $current_unallocated + $difference;
+
+        $bank_rs->update({
+            balance => $balance,
+            unallocated => $new_unallocated
+        });
+    };
+
+    return TRUE;
 }
 
 #  sub AddEnvelope
