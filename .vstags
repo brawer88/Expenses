@@ -9,6 +9,7 @@ AddEnvelope	lib/Models/Database.pm	598;"	s
 AddExpense	lib/Models/Database.pm	356;"	s
 AddIncome	lib/Models/Database.pm	448;"	s
 AddPaycheck	lib/Models/Database.pm	752;"	s
+Controllers::AjaxController	lib/Controllers/AjaxController.pm	1;"	p
 Controllers::EnvelopeController	lib/Controllers/EnvelopeController.pm	1;"	p
 Controllers::MainController	lib/Controllers/MainController.pm	1;"	p
 Controllers::TransactionController	lib/Controllers/TransactionController.pm	1;"	p
