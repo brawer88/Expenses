@@ -32,9 +32,28 @@ get '/edit' => sub
     my $user = session('user') // Models::User->new();
 
     my $trans = $db->getTransaction( $user->UID, $id );
+    my $owns = $db->UserOwnsTrans( $user->UID, $id );
 
-    template 'transaction' => {
-        'title'     => 'Expenses: Add Transaction',
+    template 'edittransaction' => {
+        'title'     => 'Expenses: Edit Transaction',
+        'logged_in' => $user->logged_in // 0,
+        'msg'       => get_flash()
+    };
+};
+
+#------------------------------------------
+#   Get method for transaction page
+#------------------------------------------
+post '/edit' => sub
+{
+    my $id   = query_parameters->get('t');
+    my $user = session('user') // Models::User->new();
+
+    my $trans = $db->getTransaction( $user->UID, $id );
+    my $owns = $db->UserOwnsTrans( $user->UID, $id );
+
+    template 'edittransaction' => {
+        'title'     => 'Expenses: Edit Transaction',
         'logged_in' => $user->logged_in // 0,
         'msg'       => get_flash()
     };

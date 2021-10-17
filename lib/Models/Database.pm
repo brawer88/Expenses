@@ -839,7 +839,7 @@ sub GetTransactions
 
             my $env_name = $env_rs->get_column("name");
             $html .= qq~
-                    <tr><td data-label="Envelope">$env_name<br><a href="/transaction/edit?t=$transaction_id" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Date">$date</td><td data-label="Amount">$amount<br>$type</td><td data-label="Reason">$reason</td></tr>
+                    <tr><td data-label="Envelope">$env_name<br><!--<a href="/transaction/edit?t=$transaction_id" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a>--></td><td data-label="Date">$date</td><td data-label="Amount">$amount<br>$type</td><td data-label="Reason">$reason</td></tr>
                  ~;
         }
         else
