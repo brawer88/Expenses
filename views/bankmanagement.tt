@@ -19,8 +19,10 @@ $(document).ready(function() {
 function reclaim(name){
      jQuery.get("/ajax/reclaim/" + name, function(data) {
         var collected = data["collected"];
+        getBanks();
         alert("Collected and reclaimed " + collected);
+        
     });
-    getBanks();
+    
 }
 </script>
