@@ -31,14 +31,32 @@ get '/delete' => sub
     my $id   = query_parameters->get('t');
     my $user = session('user') // Models::User->new();
 
-    my $trans = $db->getTransaction( $user->UID, $id );
-    my $owns = $db->UserOwnsTrans( $user->UID, $id );
+    my $trans = $db->GetSingleTransaction( $id );
 
-    template 'edittransaction' => {
-        'title'     => 'Expenses: Edit Transaction',
-        'logged_in' => $user->logged_in // 0,
-        'msg'       => get_flash()
-    };
+    my $uid = $user->UID;
+    my $tid = $trans->UID;
+
+    print "\n\n $uid == $tid \n\n";
+    
+    if($uid == $tid)
+    {
+        my $result = $db->DeleteTransaction($id);
+
+        if ($result)
+        {
+            set_flash("Transaction deleted.");
+        }
+        else
+        {
+            set_flash("Transaction could not be deleted.");
+        }
+    }
+    else
+    {
+        set_flash("You cannot delete a transaction you don't own.");
+    }
+
+    return redirect("/transaction/view");
 };
 
 

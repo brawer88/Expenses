@@ -8,3 +8,17 @@
     <% END %>
   </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $("a[name='btnDelete']").on("click", function(e){
+
+            var text = $(this).parent().next().next().html();
+
+            var r = confirm("Are you sure you want to delete this transaction for " + text + "?");
+            if (r == false) {
+                e.preventDefault();
+            }
+        });
+   }); 
+</script>

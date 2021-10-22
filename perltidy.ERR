@@ -1,0 +1,9 @@
+Perltidy version is 20210717
+
+<stdin>: Begin Error Output Stream
+
+1251: $transaction->delete();
+      ^
+found Scalar where operator expected
+
+Missing ';' or ',' above?

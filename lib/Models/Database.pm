@@ -6,6 +6,7 @@ use Models::Utilities;
 use Models::User;
 use Models::Envelope;
 use Models::Bank;
+use Models::Transaction;
 use Dancer2 appname => 'Expenses';
 use Dancer2::Plugin::Passphrase;
 use Dancer2::Plugin::DBIC;
@@ -668,7 +669,7 @@ sub AddBank
 }
 
 #  sub EditBank
-#  Abstract: Edits bank 
+#  Abstract: Edits bank
 #  params: ( $UID, $old_name, $new_name, $balance )
 #  returns: $result - the result
 sub EditBank
@@ -677,32 +678,36 @@ sub EditBank
 
     my $bank_rs = resultset('Bank')->single(
         {
-            userid      => $UID,
-            name        => $old_name
+            userid => $UID,
+            name   => $old_name
         }
     );
 
-    my $current_balance = $bank_rs->get_column("balance");
-    my $current_name = $bank_rs->get_column("name");
+    my $current_balance     = $bank_rs->get_column("balance");
+    my $current_name        = $bank_rs->get_column("name");
     my $current_unallocated = $bank_rs->get_column("unallocated");
 
-    if($new_name ne $current_name)
+    if ( $new_name ne $current_name )
     {
-        $bank_rs->update({
-            name => $new_name
-        });
-    };
+        $bank_rs->update(
+            {
+                name => $new_name
+            }
+        );
+    }
 
-    if($current_balance != $balance)
+    if ( $current_balance != $balance )
     {
-        my $difference = $balance - $current_balance;
+        my $difference      = $balance - $current_balance;
         my $new_unallocated = $current_unallocated + $difference;
 
-        $bank_rs->update({
-            balance => $balance,
-            unallocated => $new_unallocated
-        });
-    };
+        $bank_rs->update(
+            {
+                balance     => $balance,
+                unallocated => $new_unallocated
+            }
+        );
+    }
 
     return TRUE;
 }
@@ -813,7 +818,7 @@ sub GetTransactions
         },
         {
             order_by => { -desc => 'transactionid' },
-            rows => 300 
+            rows     => 300
         }
     );
 
@@ -822,13 +827,17 @@ sub GetTransactions
             ~;
     while ( my $row = $rs->next )
     {
-        my $type    = $row->get_column("type");
-        my $date    = $row->get_column("date");
-        my $amount  = $row->get_column("amount");
-        my $reason  = $row->get_column("reason");
-        my $env_id  = $row->get_column("envelopeid");
-        my $bank_id = $row->get_column("bankid");
+        my $type           = $row->get_column("type");
+        my $date           = $row->get_column("date");
+        my $amount         = $row->get_column("amount");
+        my $reason         = $row->get_column("reason");
+        my $env_id         = $row->get_column("envelopeid");
+        my $bank_id        = $row->get_column("bankid");
         my $transaction_id = $row->get_column("transactionid");
+
+        my $link = qq~<br><a href="/transaction/delete?t=$transaction_id" name="btnDelete" class="btn btn-danger btn-sm"><i class="fa fa-trash-o" aria-hidden="true"></i></a>~;
+
+        $link = '' if $type eq "Transfer";
 
         if ($env_id)
         {
@@ -840,7 +849,7 @@ sub GetTransactions
 
             my $env_name = $env_rs->get_column("name");
             $html .= qq~
-                    <tr><td data-label="Envelope">$env_name<br><!--<a href="/transaction/edit?t=$transaction_id" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a>--></td><td data-label="Date">$date</td><td data-label="Amount">$amount<br>$type</td><td data-label="Reason">$reason</td></tr>
+                    <tr><td data-label="Envelope">$env_name $link</td><td data-label="Date">$date</td><td data-label="Amount">$amount<br>$type</td><td data-label="Reason">$reason</td></tr>
                  ~;
         }
         else
@@ -854,7 +863,7 @@ sub GetTransactions
             my $bank_name = $bank_rs->get_column("name");
 
             $html .= qq~
-                    <tr><td>$bank_name</td><td>$date</td><td>$amount\n$type</td><td>$reason</td></tr>
+                    <tr><td>$bank_name $link</td><td>$date</td><td>$amount\n$type</td><td>$reason</td></tr>
                  ~;
 
         }
@@ -865,6 +874,33 @@ sub GetTransactions
 
     return $html;
 
+}
+
+#  sub GetSingleTransaction
+#  Abstract: Gets single transaction
+#  params: ( $id )
+#  returns: $trans - the transaction object
+sub GetSingleTransaction
+{
+    my ( $self, $id ) = @_;
+    my $trans = Models::Transaction->new();
+
+    my $row = resultset('Transaction')->single(
+        {
+            transactionid => $id,
+        }
+    );
+
+    $trans->type($row->type);
+    $trans->date($row->date);
+    $trans->amount($row->amount);
+    $trans->reason($row->reason);
+    $trans->envelopeid($row->get_column("envelopeid"));
+    $trans->bankid($row->get_column("bankid"));
+    $trans->transactionid($row->get_column("transactionid"));
+    $trans->UID($row->get_column("userid"));
+
+    return $trans;
 }
 
 sub AddPaycheck
@@ -1099,15 +1135,19 @@ sub DeleteEnvelope
 
     my $env_id = $rs->get_column("envelopeid");
 
-    my $transactions = resultset("Transaction")->search({
-        envelopeid => $env_id
-    });
+    my $transactions = resultset("Transaction")->search(
+        {
+            envelopeid => $env_id
+        }
+    );
 
-    while (my $row = $transactions->next)
+    while ( my $row = $transactions->next )
     {
-        $row->update({
-            envelopeid => undef
-        });
+        $row->update(
+            {
+                envelopeid => undef
+            }
+        );
     }
 
     $rs->delete();
@@ -1138,25 +1178,111 @@ sub DeleteBank
 
     my $bank_id = $rs->get_column("bankid");
 
-    my $transactions = resultset("Transaction")->search({
-        bankid => $bank_id
-    });
+    my $transactions = resultset("Transaction")->search(
+        {
+            bankid => $bank_id
+        }
+    );
 
-    while (my $row = $transactions->next)
+    while ( my $row = $transactions->next )
     {
         $row->delete();
     }
 
-    my $envelopes = resultset("Envelope")->search({
-        bankid => $bank_id
-    });
+    my $envelopes = resultset("Envelope")->search(
+        {
+            bankid => $bank_id
+        }
+    );
 
-    while (my $row = $envelopes->next)
+    while ( my $row = $envelopes->next )
     {
         $row->delete();
     }
 
     $rs->delete();
+
+    $result = 1;
+
+    return $result;
+}
+
+#  DeleteTransaction
+#  Abstract: Deletes a user transaction
+#  params: ( $id )
+#  returns: $result
+sub DeleteTransaction
+{
+    my ( $self, $id ) = @_;
+
+    my $result = 0;
+
+    my $transaction = resultset('Transaction')->single(
+        {
+            transactionid => $id
+        }
+    );
+
+    return $result if !$transaction;
+
+    my $bank = $transaction->get_column("bankid");
+    my $env  = $transaction->get_column("envelopeid");
+    my $amount = $transaction->get_column("amount");
+    my $type = $transaction->get_column("type");
+
+
+    ## add trans amount back to bank balance
+    my $new_bank_balance;
+
+    my $bank_rs = resultset("Bank")->single(
+        {
+            bankid => $bank
+        }
+    );
+
+    my $current_bank_balance = $bank_rs->get_column("balance");
+    
+    if ($type eq "Income")
+    {
+        ## add back to unallocated in bank
+        my $unallocated = $bank_rs->get_column("unallocated");
+        my $new_bank_unallocated = $unallocated + $amount;
+
+        $bank_rs->update({
+            unallocated => $new_bank_unallocated
+        });
+
+        $amount *= -1; # reverse operation for adding to envelope balance
+    }
+    else
+    {
+        $new_bank_balance = $current_bank_balance + $amount;
+
+        $bank_rs->update({
+            balance => $new_bank_balance
+        });
+    }
+    ## add transaction amount back to envelope
+    if ($env)
+    {
+        my $envelope = resultset('Envelope')->single(
+            {
+                envelopeid => $env
+            }
+        );
+
+        my $current_envelope_balance = $envelope->get_column("balance");
+
+        my $new_envelope_balance = $current_envelope_balance + $amount;
+
+
+        $envelope->update({
+            balance => $new_envelope_balance
+        });
+    }
+
+
+    $transaction->delete();
 
     $result = 1;
 
@@ -1198,20 +1324,24 @@ sub ReclaimChange
 
         my $decimal = sprintf( "%.2f", ( $balance - int($balance) ) );
 
-        if ($decimal > 0)
+        if ( $decimal > 0 )
         {
             $collected += $decimal;
 
-            $balance = $balance - $decimal;
+            $balance     = $balance - $decimal;
             $unallocated = $unallocated + $decimal;
 
-            $row->update({
-                balance => $balance
-            });
+            $row->update(
+                {
+                    balance => $balance
+                }
+            );
 
-            $bank_rs->update({
-                unallocated => $unallocated
-            });
+            $bank_rs->update(
+                {
+                    unallocated => $unallocated
+                }
+            );
 
             my $time = localtime->mysql_datetime;
 
