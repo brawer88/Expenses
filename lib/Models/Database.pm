@@ -812,7 +812,8 @@ sub GetTransactions
             userid => $UID,
         },
         {
-            order_by => { -desc => 'transactionid' }
+            order_by => { -desc => 'transactionid' },
+            rows => 300 
         }
     );
 
