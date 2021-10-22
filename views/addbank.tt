@@ -2,7 +2,7 @@
   <div id="content">
     <% IF logged_in %>
     <h1>Add a Bank</h1>
-      <form method="post" action="<% request.uri_base %>/user/addbank">
+      <form method="post" action="<% request.uri_base %>/bank/add">
         <div class="form-group">
             <div>
                 <label for="amount">Name</label>

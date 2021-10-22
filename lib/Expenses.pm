@@ -13,6 +13,7 @@ use Controllers::MainController;
 use Controllers::TransactionController;
 use Controllers::EnvelopeController;
 use Controllers::AjaxController;
+use Controllers::BankController;
 
 our $VERSION = '0.1';
 

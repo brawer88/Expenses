@@ -329,7 +329,7 @@ sub GetBankManagement
         my $name    = $row->get_column("name");
 
         $html .= qq~
-                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Edit"><a href="/user/editbank/$name" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Unallocated">$unall</td><td data-label="Collect change into unallocated"><a href="#" onclick="reclaim('$name')" style="color: white" class="btn btn-secondary btn-sm">Make It So</a></td></tr>
+                    <tr><td data-label="Name">$name</td><td data-label="Balance">$balance</td><td data-label="Edit"><a href="/bank/edit/$name" class="btn btn-secondary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i></a></td><td data-label="Unallocated">$unall</td><td data-label="Collect change into unallocated"><a href="#" onclick="reclaim('$name')" style="color: white" class="btn btn-secondary btn-sm">Make It So</a></td></tr>
                  ~;
     }
 
@@ -1108,6 +1108,52 @@ sub DeleteEnvelope
         $row->update({
             envelopeid => undef
         });
+    }
+
+    $rs->delete();
+
+    $result = 1;
+
+    return $result;
+}
+
+#  DeleteBank
+#  Abstract: Deletes a user bank
+#  params: ( $UID, $name )
+#  returns: $result
+sub DeleteBank
+{
+    my ( $self, $UID, $name ) = @_;
+
+    my $result = 0;
+
+    my $rs = resultset('Bank')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    return $result if !$rs;
+
+    my $bank_id = $rs->get_column("bankid");
+
+    my $transactions = resultset("Transaction")->search({
+        bankid => $bank_id
+    });
+
+    while (my $row = $transactions->next)
+    {
+        $row->delete();
+    }
+
+    my $envelopes = resultset("Envelope")->search({
+        bankid => $bank_id
+    });
+
+    while (my $row = $envelopes->next)
+    {
+        $row->delete();
     }
 
     $rs->delete();
