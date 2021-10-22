@@ -36,7 +36,7 @@ post '/add' => sub
 
     if ($result)
     {
-        set_flash("Added Bank $name successfully.");
+        set_flash("Added Bank <b>$name</b> successfully.");
         return redirect uri_for('/');
     }
     else
@@ -86,7 +86,7 @@ post '/edit/:name' => sub
 
     if ($result)
     {
-        set_flash("Editing Bank $old_name successfully.");
+        set_flash("Editing Bank <b>$old_name</b> successfully.");
         return redirect uri_for('/');
     }
     else
@@ -118,7 +118,7 @@ post '/delete/:name' => sub
 
     if ($result)
     {
-        set_flash("Deleting Bank $name successfully.");
+        set_flash("Deleted Bank <b>$name</b> successfully.");
         return redirect uri_for('/');
     }
     else
