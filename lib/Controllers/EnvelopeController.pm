@@ -7,6 +7,51 @@ my $db = Models::Database->new();
 prefix '/envelope';
 
 #------------------------------------------
+#   Post method for transaction page
+#------------------------------------------
+post '/delete/:envelope' => sub
+{
+    my $edit_name = param('envelope');
+    my $user      = session('user') // Models::User->new();
+
+    my $name     = body_parameters->get('name');
+    my $balance  = body_parameters->get('balance');
+    my $goal     = body_parameters->get('goal');
+    my $bank_id  = body_parameters->get('banks');
+    my $autofill = body_parameters->get('autofill');
+    my $due      = body_parameters->get('due');
+
+    my $due_html = getDateSelected($due);
+    my $banks    = $db->GetBanksSelected( $user->UID, $bank_id );
+    my $owns     = $db->UserOwns( $user->UID, $edit_name );
+
+    my $result;
+
+    if ($owns)
+    {
+        $result = $db->DeleteEnvelope( $user->UID, $name );
+    }
+
+    if ($result)
+    {
+        return redirect uri_for("/");
+    }
+
+    template 'editenvelope' => {
+        'title'     => 'Expenses: Edit Envelope',
+        'logged_in' => $user->logged_in // 0,
+        'name'      => $name,
+        'banks'     => $banks,
+        'balance'   => $balance,
+        'goal'      => $goal,
+        'autofill'  => $autofill,
+        'owns'      => $owns,
+        'msg'       => "Deleting envelope failed."
+    };
+
+};
+
+#------------------------------------------
 #   Get method for adding a bank
 #------------------------------------------
 get '/fillenvelope' => sub
@@ -67,7 +112,7 @@ get '/:envelope' => sub
     my $owns  = $db->UserOwns( $user->UID, $name );
 
     template 'editenvelope' => {
-        'title'     => 'Expenses: Add Transaction',
+        'title'     => 'Expenses: Edit Envelope',
         'logged_in' => $user->logged_in // 0,
         'name'      => $envelope->name,
         'banks'     => $banks,
@@ -86,8 +131,8 @@ get '/:envelope' => sub
 post '/:envelope' => sub
 {
     my $edit_name = param('envelope');
-    my $user = session('user') // Models::User->new();
-        
+    my $user      = session('user') // Models::User->new();
+
     my $name     = body_parameters->get('name');
     my $balance  = body_parameters->get('balance');
     my $goal     = body_parameters->get('goal');
@@ -95,16 +140,17 @@ post '/:envelope' => sub
     my $autofill = body_parameters->get('autofill');
     my $due      = body_parameters->get('due');
 
-    my $due_html   = getDateSelected( $due );
-    my $banks = $db->GetBanksSelected( $user->UID, $bank_id );
-    my $owns  = $db->UserOwns( $user->UID, $edit_name );
+    my $due_html = getDateSelected($due);
+    my $banks    = $db->GetBanksSelected( $user->UID, $bank_id );
+    my $owns     = $db->UserOwns( $user->UID, $edit_name );
 
     my $result;
 
     if ($owns)
     {
-        $result = $db->UpdateEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill,
-        $due );
+        $result =
+          $db->UpdateEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill,
+            $due );
     }
 
     if ($result)
@@ -113,7 +159,7 @@ post '/:envelope' => sub
     }
 
     template 'editenvelope' => {
-        'title'     => 'Expenses: Add Transaction',
+        'title'     => 'Expenses: Edit Envelope',
         'logged_in' => $user->logged_in // 0,
         'name'      => $name,
         'banks'     => $banks,
@@ -124,7 +170,7 @@ post '/:envelope' => sub
         'date'      => $due_html,
         'msg'       => "Updating envelope failed."
     };
-    
+
 };
 
 prefix '/';

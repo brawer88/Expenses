@@ -16,9 +16,10 @@ Controllers::TransactionController	lib/Controllers/TransactionController.pm	1;"	
 Controllers::UserController	lib/Controllers/UserController.pm	1;"	p
 CreateAccount	lib/Models/Database.pm	925;"	s
 DESTROY	lib/Models/Bank.pm	77;"	s
-DESTROY	lib/Models/Database.pm	1132;"	s
+DESTROY	lib/Models/Database.pm	1192;"	s
 DESTROY	lib/Models/Envelope.pm	127;"	s
 DESTROY	lib/Models/User.pm	98;"	s
+DeleteEnvelope	lib/Models/Database.pm	1063;"	s
 EditBank	lib/Models/Database.pm	674;"	s
 Expense::Schema	lib/Expense/Schema.pm	2;"	p
 Expense::Schema::Result::Bank	lib/Expense/Schema/Result/Bank.pm	2;"	p
@@ -54,7 +55,8 @@ Models::Database::AddExpense	lib/Models/Database.pm	425;"	s
 Models::Database::AddIncome	lib/Models/Database.pm	519;"	s
 Models::Database::AddPaycheck	lib/Models/Database.pm	869;"	s
 Models::Database::CreateAccount	lib/Models/Database.pm	925;"	s
-Models::Database::DESTROY	lib/Models/Database.pm	1132;"	s
+Models::Database::DESTROY	lib/Models/Database.pm	1192;"	s
+Models::Database::DeleteEnvelope	lib/Models/Database.pm	1063;"	s
 Models::Database::EditBank	lib/Models/Database.pm	674;"	s
 Models::Database::FillEnvelope	lib/Models/Database.pm	749;"	s
 Models::Database::GetAutofillCheckboxes	lib/Models/Database.pm	194;"	s
@@ -70,7 +72,7 @@ Models::Database::GetEnvelopes	lib/Models/Database.pm	100;"	s
 Models::Database::GetEnvelopesSelect	lib/Models/Database.pm	156;"	s
 Models::Database::GetTransactions	lib/Models/Database.pm	805;"	s
 Models::Database::Login	lib/Models/Database.pm	31;"	s
-Models::Database::ReclaimChange	lib/Models/Database.pm	1063;"	s
+Models::Database::ReclaimChange	lib/Models/Database.pm	1123;"	s
 Models::Database::UpdateEnvelope	lib/Models/Database.pm	983;"	s
 Models::Database::UserOwns	lib/Models/Database.pm	962;"	s
 Models::Database::new	lib/Models/Database.pm	18;"	s
@@ -106,7 +108,7 @@ Models::Utilities::getLinkInfo	lib/Models/Utilities.pm	286;"	s
 Models::Utilities::get_flash	lib/Models/Utilities.pm	42;"	s
 Models::Utilities::printHash	lib/Models/Utilities.pm	211;"	s
 Models::Utilities::set_flash	lib/Models/Utilities.pm	33;"	s
-ReclaimChange	lib/Models/Database.pm	1063;"	s
+ReclaimChange	lib/Models/Database.pm	1123;"	s
 UID	lib/Models/Bank.pm	20;"	s
 UID	lib/Models/Envelope.pm	20;"	s
 UID	lib/Models/User.pm	20;"	s

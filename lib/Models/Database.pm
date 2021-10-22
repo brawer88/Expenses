@@ -1056,6 +1056,66 @@ sub UpdateEnvelope
     return $result;
 }
 
+#  DeleteEnvelope
+#  Abstract: Deletes a user envelope
+#  params: ( $UID, $name )
+#  returns: $result
+sub DeleteEnvelope
+{
+    my ( $self, $UID, $name ) = @_;
+
+    my $result = 0;
+
+    my $rs = resultset('Envelope')->single(
+        {
+            userid => $UID,
+            name   => $name
+        }
+    );
+
+    return $result if !$rs;
+
+    my $current_bank             = $rs->get_column("bankid");
+    my $current_envelope_balance = $rs->get_column("balance");
+
+    my $new_bank_unallocated;
+
+    my $bank_rs = resultset("Bank")->single(
+        {
+            bankid => $current_bank
+        }
+    );
+
+    my $current_bank_unallocated = $bank_rs->get_column("unallocated");
+
+    #free all money tied to this envelope
+    $new_bank_unallocated = $current_bank_unallocated + $current_envelope_balance;
+    $bank_rs->update(
+        {
+            unallocated => $new_bank_unallocated
+        }
+    );
+
+    my $env_id = $rs->get_column("envelopeid");
+
+    my $transactions = resultset("Transaction")->search({
+        envelopeid => $env_id
+    });
+
+    while (my $row = $transactions->next)
+    {
+        $row->update({
+            envelopeid => undef
+        });
+    }
+
+    $rs->delete();
+
+    $result = 1;
+
+    return $result;
+}
+
 #  ReclaimChange
 #  Abstract: Adds income to envelope and connected bank
 #  params: ( $UID, $bank_name )
