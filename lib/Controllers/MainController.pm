@@ -14,6 +14,7 @@ get '/' => sub
     my $envelopes;
 
     $envelopes = $db->GetEnvelopes( $user->UID );
+    $db->ResetUnallocated( $user->UID );
 
     $banks = $db->GetBanks( $user->UID );
 

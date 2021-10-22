@@ -1363,6 +1363,51 @@ sub ReclaimChange
     return $collected;
 }
 
+#  ResetUnallocated
+#  Abstract: Resets unallocated on the off chance edits messed it up
+#  params: ( $UID )
+#  returns: void
+sub ResetUnallocated
+{
+    my ( $self, $UID ) = @_;
+
+    my $rs = resultset('Bank')->search(
+        {
+            userid => $UID
+        },
+        {
+            order_by => { -asc => 'bankid' }
+        }
+    );
+
+    while ( my $bank = $rs->next )
+    {
+        my $balance = $bank->get_column("balance");
+        my $unallocated;
+        my $allocated;
+        my $id = $bank->get_column("bankid");
+
+        my $envelopes = resultset('Envelope')->search(
+            {
+                userid => $UID,
+                bankid => $id
+            }
+        );
+
+        while ( my $envelop = $envelopes->next )
+        {
+            $allocated += $envelop->get_column("balance");
+        }
+
+        $unallocated = $balance - $allocated;
+
+        $bank->update({
+            unallocated => $unallocated
+        });
+
+    }
+}
+
 #------------------------------------------
 #   Destructor
 #------------------------------------------
