@@ -6,7 +6,7 @@
         <div class="form-group">
             <div>
                 <label for="amount">Name</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required value="<% name %>">
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" pattern="[a-zA-Z0-9 ]+" oninvalid="setCustomValidity('Please use only numbers or letters, spaces are allowed.')" oninput="setCustomValidity('')" required value="<% name %>">
             </div>
             <div>
                 <label for="amount">Current Balance</label>

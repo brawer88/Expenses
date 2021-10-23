@@ -6,14 +6,14 @@
         <div class="form-group">
             <div>
                 <label for="amount">Name</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" pattern="[a-zA-Z0-9 ]+" oninvalid="setCustomValidity('Please use only numbers or letters, spaces are allowed.')" oninput="setCustomValidity('')" required>
             </div>
             <div>
                 <label for="amount">Starting Balance</label>
                 <input type="number" class="form-control" name="balance" id="balance" placeholder="Starting Balance" step="0.01" required>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" name="btnSubmit" class="btn btn-primary">Submit</button>
       </form>
     <% ELSE %>
       <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to add a bank.</p>

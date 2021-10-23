@@ -7,7 +7,7 @@
                 <div class="form-group">
                     <div>
                         <label for="amount">Name</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="My Envelope" required>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="My Envelope" pattern="[a-zA-Z0-9 ]+" oninvalid="setCustomValidity('Please use only numbers or letters, spaces are allowed.')" oninput="setCustomValidity('')" required>
                     </div>
                     <div>
                         <label for="banks">Select the Bank this belongs to:</label>

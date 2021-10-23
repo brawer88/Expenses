@@ -5,7 +5,7 @@
         <div class="form-group">
           <div>
             <label for="user">Username:</label>
-            <input class="form-control" id="user" name="user" type="text" required value="<% user %>">
+            <input class="form-control" id="user" name="user" type="text" required pattern="[a-zA-Z0-9]+" oninvalid="setCustomValidity('Please use only numbers or letters.')" oninput="setCustomValidity('')" value="<% user %>">
           </div>
           <div>
             <label for="password">Password:</label>
@@ -13,17 +13,17 @@
           </div>
           <div>
             <label for="fname">First Name:</label>
-            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" value="<% fname %>">
+            <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name" pattern="[a-zA-Z]+" oninvalid="setCustomValidity('Please use only letters.')" oninput="setCustomValidity('')"  value="<% fname %>">
           </div>
           <div>
             <label for="lname">Last Name:</label>
-            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" value="<% lname %>">
+            <input type="text" class="form-control" name="lname" id="lname" placeholder="Last Name" pattern="[a-zA-Z]+" oninvalid="setCustomValidity('Please use only letters.')" oninput="setCustomValidity('')" value="<% lname %>">
           </div>
         <h1>Add a Bank</h1>
         <div class="form-group">
             <div>
                 <label for="name">Name</label>
-                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" required value="<% name %>">
+                <input type="text" class="form-control" name="name" id="name" placeholder="Checking/Savings" pattern="[a-zA-Z0-9 ]+" oninvalid="setCustomValidity('Please use only numbers or letters, spaces are allowed.')" oninput="setCustomValidity('')" required value="<% name %>">
             </div>
             <div>
                 <label for="balance">Starting Balance</label>
