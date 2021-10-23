@@ -150,7 +150,7 @@ post '/:envelope' => sub
     {
         $result =
           $db->UpdateEnvelope( $user->UID, $name, $balance, $goal, $bank_id, $autofill,
-            $due );
+            $due, $edit_name );
     }
 
     if ($result)

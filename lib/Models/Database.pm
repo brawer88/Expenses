@@ -1019,14 +1019,14 @@ sub UserOwns
 #  returns: $user
 sub UpdateEnvelope
 {
-    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill, $due ) = @_;
+    my ( $self, $UID, $name, $balance, $goal, $bank_id, $autofill, $due, $edit_name ) = @_;
 
     my $result = 0;
 
     my $rs = resultset('Envelope')->single(
         {
             userid => $UID,
-            name   => $name
+            name   => $edit_name
         }
     );
 
