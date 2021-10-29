@@ -753,16 +753,17 @@ sub AddEnvelope
 #  returns: $result - the result
 sub FillEnvelope
 {
-    my ( $self, $UID, $env_id, $bank_id, $amount ) = @_;
+    my ( $self, $UID, $env_id, $from_bank_id, $amount ) = @_;
 
     my $bank_rs = resultset('Bank')->single(
         {
-            bankid => $bank_id
+            bankid => $from_bank_id
         }
     );
 
     my $bank_name   = $bank_rs->get_column("name");
     my $unallocated = $bank_rs->get_column("unallocated");
+    my $b_balance = $bank_rs->get_column("balance");
 
     my $new_unallocated = $unallocated - $amount;
     $bank_rs->update(
@@ -780,6 +781,24 @@ sub FillEnvelope
     my $name        = $envelope_rs->get_column("name");
     my $balance     = $envelope_rs->get_column("balance");
     my $new_balance = $balance + $amount;
+    my $to_bank     = $envelope_rs->get_column("bankid");
+
+    if ($to_bank != $from_bank_id)
+    {
+        $bank_rs->update({
+            balance => $b_balance - $amount
+        });
+
+        my $other_bank = resultset("Bank")->single({
+            bankid => $to_bank
+        });
+
+        my $o_balance = $other_bank->get_column("balance");
+
+        $other_bank->update({
+            balance => $o_balance + $amount,
+        });
+    }
 
     $envelope_rs->update(
         {
@@ -793,7 +812,7 @@ sub FillEnvelope
     my $transaction_rs = resultset('Transaction')->create(
         {
             envelopeid => $env_id,
-            bankid     => $bank_id,
+            bankid     => $from_bank_id,
             userid     => $UID,
             amount     => $amount,
             reason     => $for,
