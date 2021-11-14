@@ -106,6 +106,9 @@ sub GetEnvelopes
     my $rs = resultset('Envelope')->search(
         {
             userid => $UID,
+            -and => [
+                balance => { '!=' => 0}
+            ]
         },
         {
             order_by => { -asc => 'duedate, name' }
@@ -145,6 +148,13 @@ sub GetEnvelopes
                     </div>
                 </div>        
         ~;
+    }
+
+    if (!$html)
+    {
+        $html = qq~<div class="warning">
+                <i class="fa fa-warning"></i>
+        <p>You do not have any envelopes with a balance.</p></div>~;
     }
 
     return $html;
