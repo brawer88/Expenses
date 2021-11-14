@@ -3,6 +3,7 @@
     <% IF logged_in %>
       <div id="bank_div"><% banks %></div>
       <div id="env_div"><% envelopes %></div>
+      <p><small>* only envelopes with a balance are shown</small></p>
     <% ELSE %>
       <p>Please <a href="<% request.uri_base %>/user/login">log in</a> to view your envelopes</p>
       <p>Need an Account? Create one <a href="<% request.uri_base %>/user/create">here<a/>.</p>
